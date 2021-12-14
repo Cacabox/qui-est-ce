@@ -1,0 +1,51 @@
+.character {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.character--box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: url(../../../assets/character-box.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    z-index: 1000;
+}
+
+.character--name {
+    font-size: 16px;
+    position: absolute;
+    bottom: 20%;
+    color: #FDE325;
+    background-color: #000000;
+    left: 0;
+    right: 0;
+    padding: 4px 0;
+    text-align: center;
+}
+
+.character--image {
+    z-index: 900;
+    position: absolute;
+    top: 8%;
+    max-height: 71%;
+}
+
+.character_hide .character--box {
+    background-position-y: 150px;
+}
+
+.character_hide .character--image {
+    filter: invert(1);
+    top: calc(8% + 150px);
+}
+
+.character_hide .character--name {
+    bottom: 0;
+}

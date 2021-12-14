@@ -1,0 +1,101 @@
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(../assets/FuturaPT-Bold.woff2) format("woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(../assets/FuturaPT-MediumObl.woff2) format("woff2");
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(../assets/FuturaPT-Medium.woff2) format("woff2");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT Book";
+    src: url(../assets/FuturaPT-Book.woff2) format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT Demi";
+    src: url(../assets/FuturaPT-Demi.woff2) format("woff2");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT Demi";
+    src: url(../assets/FuturaPT-DemiObl.woff2) format("woff2");
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(../assets/FuturaPT-BoldObl.woff2) format("woff2");
+    font-weight: bold;
+    font-style: italic;
+}
+
+html,
+body,
+#app {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: "Futura PT";
+    color: #ffffff;
+    background-color: #00257A;
+}
+
+body.modal--open {
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-size: 54px;
+}
+
+button {
+    width: 300px;
+    background-color: #9146FF;
+    padding: 8px;
+    color: #ffffff;
+    font-size: 16px;
+    font-family: "Futura PT";
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 auto;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 16px;
+}
+
+button:disabled {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+a {
+    text-decoration: none;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}

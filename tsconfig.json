@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "esModuleInterop": true,
+        "jsx": "react",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "ESNext"
+        ],
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "strict": true,
+        "target": "ESNext",
+        "module": "ESNext",
+        "paths": {
+            "@components/*": ["components/*"],
+            "@helpers/*": ["helpers/*"],
+            "@i18n/*": ["i18n/*"]
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "ES2019",
+            "DOM"
+        ],
+        "target": "ES2019",
+        "module": "commonjs"
+    },
+    "extends": "./tsconfig.json"
+}

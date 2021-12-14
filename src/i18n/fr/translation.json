@@ -1,0 +1,25 @@
+{
+    "translation": {
+        "chooseteam": {
+            "host": "Présentateur",
+            "player": "Joueur"
+        },
+        "hostview": {
+            "endround": "Finir le round",
+            "startround": "Démarrer le round"
+        },
+        "login": {
+            "title": "Se connecter avec Twitch",
+            "action": "Se connecter"
+        },
+        "pyramide": {
+            "bank": "Banque",
+            "sub": "sub"
+        },
+        "question": {
+            "anwser": "Réponse",
+            "right": "Correct",
+            "wrong": "Faux"
+        }
+    }
+}
