@@ -4,7 +4,6 @@ import LanguageDetector from "i18next-browser-languagedetector";
 
 import { SETTINGSKEY } from "@helpers/settings";
 
-import en from "./en/translation.json";
 import fr from "./fr/translation.json";
 
 const settings = window.localStorage.getItem(SETTINGSKEY);
@@ -22,7 +21,6 @@ i18n
             escapeValue: false, // not needed for react as it escapes by default
         },
         resources: {
-            en,
             fr,
         },
     });

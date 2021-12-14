@@ -1,6 +1,6 @@
 {
   "name": "qui-est-ce",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/main.js",
   "repository": "git@github.com:alefoll/qui-est-ce.git",
   "license": "MIT",

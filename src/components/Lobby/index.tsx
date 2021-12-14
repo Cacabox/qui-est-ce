@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useTranslation } from "react-i18next";
 
 import { CharacterProps } from "@components/Character";
 
@@ -30,6 +31,8 @@ export const Lobby = () => {
         setPublishRoundCharacters(generateCharacters());
     }
 
+    const { t } = useTranslation();
+
     useEffect(() => {
         channel.subscribe("roundState", ({ data: roundState }: { data: RoundState }) => {
             setRoundState(roundState);
@@ -57,14 +60,14 @@ export const Lobby = () => {
     if (players.length < 2) {
         return (
             <div className="lobby">
-                En attente de l'adversaire
+                { t("lobby.waiting") }
             </div>
         );
     }
 
     return (
         <div className="lobby">
-            <button onClick={ () => startRound() }>Commencer une partie</button>
+            <button onClick={ () => startRound() }>{ t("lobby.start") }</button>
         </div>
     );
 }

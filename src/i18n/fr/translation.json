@@ -1,25 +1,15 @@
 {
     "translation": {
-        "chooseteam": {
-            "host": "Présentateur",
-            "player": "Joueur"
+        "choosecharacter": {
+            "title": "Choisi le personnage que ton adversaire doit découvrir"
         },
-        "hostview": {
-            "endround": "Finir le round",
-            "startround": "Démarrer le round"
+        "lobby": {
+            "start": "Commencer une partie",
+            "waiting": "En attente de l'adversaire"
         },
-        "login": {
-            "title": "Se connecter avec Twitch",
-            "action": "Se connecter"
-        },
-        "pyramide": {
-            "bank": "Banque",
-            "sub": "sub"
-        },
-        "question": {
-            "anwser": "Réponse",
-            "right": "Correct",
-            "wrong": "Faux"
+        "plateau": {
+            "guess": "Est-ce que c'est",
+            "no": "Non"
         }
     }
 }

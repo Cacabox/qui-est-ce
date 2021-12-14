@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { useTranslation } from "react-i18next";
 
 import { Character, CharacterProps } from "@components/Character";
 import { ChooseCharacter } from "@components/ChooseCharacter";
@@ -52,6 +53,8 @@ export const Plateau = () => {
         className.push("plateau--guessing");
     }
 
+    const { t } = useTranslation();
+
     return (
         <>
             <div className={ className.join(" ") }>
@@ -77,9 +80,9 @@ export const Plateau = () => {
 
                     { characterGuessed &&
                         <div>
-                            Est-ce que c'est { characterGuessed.name } ?
+                            { t("plateau.guess") } { characterGuessed.name } ?
 
-                            <button onClick={ () => setCharacterGuess(undefined) }>Non</button>
+                            <button onClick={ () => setCharacterGuess(undefined) }>{ t("plateau.no") }</button>
                         </div>
                     }
                 </div>

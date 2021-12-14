@@ -1,5 +1,6 @@
 import React from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useTranslation } from "react-i18next";
 
 import { Character, CharacterProps } from "@components/Character";
 
@@ -16,9 +17,11 @@ export const ChooseCharacter = () => {
         setOpponentCharacter(character);
     };
 
+    const { t } = useTranslation();
+
     return (
         <div className="choosecharacter">
-            <div className="choosecharacter--title">Choisi le personnage que ton adversaire doit découvrir</div>
+            <div className="choosecharacter--title">{ t("choosecharacter.title") }</div>
 
             <div className="choosecharacter--container">
                 <div className="choosecharacter--list">
