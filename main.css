@@ -1,0 +1,226 @@
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(assets/FuturaPT-Bold.woff2) format("woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(assets/FuturaPT-MediumObl.woff2) format("woff2");
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(assets/FuturaPT-Medium.woff2) format("woff2");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT Book";
+    src: url(assets/FuturaPT-Book.woff2) format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT Demi";
+    src: url(assets/FuturaPT-Demi.woff2) format("woff2");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Futura PT Demi";
+    src: url(assets/FuturaPT-DemiObl.woff2) format("woff2");
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Futura PT";
+    src: url(assets/FuturaPT-BoldObl.woff2) format("woff2");
+    font-weight: bold;
+    font-style: italic;
+}
+
+html,
+body,
+#app {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: "Futura PT";
+    color: #ffffff;
+    background-color: #00257A;
+}
+
+body.modal--open {
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-size: 54px;
+}
+
+button {
+    width: 300px;
+    background-color: #9146FF;
+    padding: 8px;
+    color: #ffffff;
+    font-size: 16px;
+    font-family: "Futura PT";
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 auto;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 16px;
+}
+
+button:disabled {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+a {
+    text-decoration: none;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+
+.character {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.character--box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: url(assets/character-box.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    z-index: 1000;
+}
+
+.character--name {
+    font-size: 16px;
+    position: absolute;
+    bottom: 20%;
+    color: #FDE325;
+    background-color: #000000;
+    left: 0;
+    right: 0;
+    padding: 4px 0;
+    text-align: center;
+}
+
+.character--image {
+    z-index: 900;
+    position: absolute;
+    top: 8%;
+    max-height: 71%;
+}
+
+.character_hide .character--box {
+    background-position-y: 150px;
+}
+
+.character_hide .character--image {
+    filter: invert(1);
+    top: calc(8% + 150px);
+}
+
+.character_hide .character--name {
+    bottom: 0;
+}
+
+.choosecharacter {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #000c;
+    z-index: 1000;
+}
+
+.choosecharacter--title {
+    font-size: 32px;
+    text-align: center;
+}
+
+.choosecharacter--container {
+    position: relative;
+    flex: 1 1 auto;
+}
+
+.choosecharacter--list {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 16px 16px;
+    margin: 0;
+    flex: 1 1 auto;
+    position: absolute;
+    top: 0;
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
+}
+
+.plateau {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 16px 16px;
+    margin: 32px;
+    flex: 1 1 auto;
+    background-color: #D50F26;
+    padding: 32px;
+}
+
+.plateau--bottom {
+    display: flex;
+}
+
+.plateau--opponent {
+    margin: 0 32px;
+}
+
+.plateau--opponent,
+.plateau--opponent .character {
+    width: 157px;
+    height: 293px;
+}
+
+.plateau--guessing .character:hover {
+    box-shadow: 0 0 15px #ffffff;
+}
+
+.logout {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
