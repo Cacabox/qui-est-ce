@@ -69,7 +69,7 @@ export const Character = ({
                     onClick={ () => onClick && onClick(character) }
                 >
                     <div className="character--box__background">
-                        <img src="../../../assets/case-background.webp" />
+                        <img src="assets/case-background.webp" />
                     </div>
 
                     <div className="character--box__image">
@@ -77,7 +77,7 @@ export const Character = ({
                     </div>
 
                     <div className="character--box__front">
-                        <img src="../../../assets/case-front.webp" />
+                        <img src="assets/case-front.webp" />
                     </div>
 
                     <div className="character--box__name">{ name }</div>

@@ -9,10 +9,10 @@ import "../../../assets/plateau-front.webp";
 
 export const LoadAssets = () => {
     const assets = [
-        "../../../assets/case-background.webp",
-        "../../../assets/case-front.webp",
-        "../../../assets/plateau-background.webp",
-        "../../../assets/plateau-front.webp",
+        "assets/case-background.webp",
+        "assets/case-front.webp",
+        "assets/plateau-background.webp",
+        "assets/plateau-front.webp",
     ];
 
     return (

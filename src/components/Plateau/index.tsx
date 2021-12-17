@@ -127,7 +127,7 @@ export const Plateau = ({
 
     return (
         <div className="plateau">
-            <img src="../../../assets/plateau-front.webp" alt="Plateau" />
+            <img src="assets/plateau-front.webp" alt="Plateau" />
 
             { charactersPerRow.map((row, rowIndex) =>
                 <div className="plateau--row" key={ rowIndex } style={{ ...computeBounds(rowPosition[rowIndex], imageSize), zIndex: 500 + (rowIndex * 100) }}>
