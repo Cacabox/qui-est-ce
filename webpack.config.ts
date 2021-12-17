@@ -24,7 +24,7 @@ export default function(): Configuration {
                         filename: "[name][ext]",
                     }
                 }, {
-                    test      : /\.(jpeg|png|svg|woff2)$/,
+                    test      : /\.(avif|png|svg|ttf|webp|woff2)$/,
                     type      : "asset/resource",
                     generator : {
                         filename: "assets/[name][ext]",

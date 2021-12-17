@@ -48,15 +48,22 @@
     font-style: italic;
 }
 
+@font-face {
+    font-family: "Permanent Marker";
+    src: url(../assets/PermanentMarker-Regular.ttf) format("truetype");
+    font-weight: 500;
+    font-style: normal;
+}
+
 html,
 body,
 #app {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    font-family: "Futura PT";
+    height: 100vh;
+    font-family: "Permanent Marker";
     color: #ffffff;
-    background-color: #00257A;
+    background-color: #1156FC;
 }
 
 body.modal--open {

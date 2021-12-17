@@ -1,51 +1,79 @@
 .character {
+    /* overflow: hidden; */
     display: flex;
     justify-content: center;
-    align-items: center;
     flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
 }
 
 .character--box {
     position: relative;
+    cursor: pointer;
+
+    max-height: 100%;
+    aspect-ratio: 468 / 861;
+}
+
+.character--box__background,
+.character--box__image,
+.character--box__front,
+.character--box__name {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.character--box img {
     width: 100%;
     height: 100%;
-    background-image: url(../../../assets/character-box.png);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    z-index: 1000;
 }
 
-.character--name {
-    font-size: 16px;
+.character--box__background {
+    z-index: 700;
+}
+
+.character--box__image {
+    z-index: 800;
+
+    /* top: (78 / 861) * 100; */
+    top: 9.059233449477352%;
+    /* right: (32 / 468) * 100; */
+    right: 6.837606837606838%;
+    /* bottom: (192 / 861) * 100; */
+    bottom: 22.299651567944252%;
+    /* left: (38 / 468) * 100; */
+    left: 8.11965811965812%;
+}
+
+.character--box__image img {
+    height: auto;
+
     position: absolute;
-    bottom: 20%;
-    color: #FDE325;
-    background-color: #000000;
-    left: 0;
-    right: 0;
-    padding: 4px 0;
-    text-align: center;
-}
-
-.character--image {
-    z-index: 900;
-    position: absolute;
-    top: 8%;
-    max-height: 71%;
-}
-
-.character_hide .character--box {
-    background-position-y: 150px;
-}
-
-.character_hide .character--image {
-    filter: invert(1);
-    top: calc(8% + 150px);
-}
-
-.character_hide .character--name {
     bottom: 0;
+}
+
+.character--box__front {
+    z-index: 900;
+}
+
+.character--box__name {
+    z-index: 1000;
+
+    /* top: (550 / 861) * 100; */
+    top: 63.879210220673635%;
+    /* right: ((468 - 417) / 468) * 100; */
+    right: 10.897435897435898%;
+    /* bottom: ((861 - 622) / 861) * 100; */
+    bottom: 27.75842044134727%;
+    /* left: (57 / 468) * 100; */
+    left: 12.179487179487179%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #E0E300;
+
+    transform: rotate(-3deg);
 }

@@ -5,7 +5,7 @@ import { getChannel } from "@helpers/client";
 
 import type { CharacterProps } from "@components/Character";
 
-export type RoundState = "not-started" | "running" | "finished";
+export type RoundState = "not-started" | "choose-character" | "running" | "finished";
 
 export const roundStateAtom = atom<RoundState>({
     key     : "roundStateAtom",

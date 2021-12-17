@@ -46,8 +46,8 @@ export const Lobby = () => {
 
                 if (roundCharacters.length === 0) {
                     setPublishRoundCharacters(generateCharacters());
-                } else {
-                    setPublishRoundState("running");
+
+                    setPublishRoundState("choose-character");
                 }
             }
         };

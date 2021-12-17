@@ -1,28 +1,15 @@
 .plateau {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 16px 16px;
-    margin: 32px;
-    flex: 1 1 auto;
-    background-color: #D50F26;
-    padding: 32px;
+    max-height: 100%;
+    position: relative;
+    aspect-ratio: 2400 / 1840;
 }
 
-.plateau--bottom {
-    display: flex;
+.plateau > img {
+    width: 100%;
+    height: 100%;
 }
 
-.plateau--opponent {
-    margin: 0 32px;
-}
-
-.plateau--opponent,
-.plateau--opponent .character {
-    width: 157px;
-    height: 293px;
-}
-
-.plateau--guessing .character:hover {
-    box-shadow: 0 0 15px #ffffff;
+.plateau--row {
+    position: absolute;
+    overflow: hidden;
 }

@@ -1,9 +1,11 @@
 import React, { Suspense } from "react";
 import { useRecoilValue } from "recoil";
 
+import { ChooseCharacter } from "@components/ChooseCharacter";
 import { Client } from "@components/Client";
+import { LoadAssets } from "@components/LoadAssets";
 import { Lobby } from "@components/Lobby";
-import { Plateau } from "@components/Plateau";
+import { Scene } from "@components/Scene";
 
 import { publishRoundState } from "@helpers/round";
 
@@ -16,6 +18,7 @@ export const App = () => {
         <Suspense fallback={<></>}>
             <Client />
             <Game />
+            <LoadAssets />
         </Suspense>
     );
 }
@@ -28,7 +31,10 @@ const Game = () => {
         case "finished":
             return <Lobby />
 
+        case "choose-character":
+            return <ChooseCharacter />
+
         case "running":
-            return <Plateau />
+            return <Scene />
     }
 }

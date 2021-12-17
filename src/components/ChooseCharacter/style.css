@@ -4,27 +4,50 @@
     right: 0;
     bottom: 0;
     left: 0;
+    background-color: rgba(0, 0, 0, .8);
+    z-index: 1000;
+    display: flex;
+}
+
+.choosecharacter--modal {
     display: flex;
     flex-direction: column;
-    background-color: #000c;
-    z-index: 1000;
+    flex: 1 1 auto;
+
+    margin: 64px;
+    overflow: hidden;
+
+    border-radius: 6px;
+    border: 20px solid #ffffff;
+    box-shadow: inset 0 0 10px #000000, 0 0 10px #000000;
+
+    background-image: url(../../../assets/plateau-background.webp);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    color: #1156FC;
 }
 
-.choosecharacter--title {
+.choosecharacter--modal__title {
     font-size: 32px;
     text-align: center;
+    margin: 16px;
 }
 
-.choosecharacter--container {
-    position: relative;
+.choosecharacter--modal__container {
     flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
 }
 
 .choosecharacter--list {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 16px 16px;
+    gap: 32px 16px;
     margin: 0;
     flex: 1 1 auto;
     position: absolute;
@@ -32,4 +55,10 @@
     left: 32px;
     right: 32px;
     bottom: 32px;
+}
+
+.choosecharacter--list__character {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
