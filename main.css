@@ -64,6 +64,7 @@ body,
     font-family: "Permanent Marker";
     color: #ffffff;
     background-color: #1156FC;
+    user-select: none;
 }
 
 body.modal--open {
@@ -80,19 +81,28 @@ h1 {
 }
 
 button {
-    width: 300px;
-    background-color: #9146FF;
     padding: 8px;
+    width: 300px;
+    margin: 16px;
+
     color: #ffffff;
+
+    border: 2px solid #E0E300;
+    background-color: #1156FC;
+    border-radius: 4px;
+
     font-size: 16px;
     font-family: "Futura PT";
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 0 auto;
-    font-weight: 600;
     text-transform: uppercase;
-    margin: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all linear 100ms;
+}
+
+button:hover {
+    box-shadow: 0 0 15px #E0E300;
 }
 
 button:disabled {
@@ -120,6 +130,8 @@ a {
 
     max-height: 100%;
     aspect-ratio: 468 / 861;
+
+    transition: filter linear 100ms;
 }
 
 .character--box__background,
@@ -268,6 +280,10 @@ a {
     flex-direction: column;
 }
 
+.choosecharacter--modal__container .character--box:hover {
+    box-shadow: 0 0 16px #ffffff;
+}
+
 .loadassets {
     position: absolute;
     top: -1px;
@@ -277,16 +293,146 @@ a {
     overflow: hidden;
 }
 
+.lobby {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
+    animation: colorTransition 5s alternate infinite;
+}
+
+.lobby--start {
+    font-size: 32px;
+    width: 500px;
+}
+
+.lobby--toomanyplayers {
+    font-size: 24px;
+}
+
+@keyframes colorTransition {
+    0% { background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%); }
+    1% { background: linear-gradient(200deg, #1156FC 35%, hsl(171, 100%, 50%) 100%); }
+    2% { background: linear-gradient(200deg, #1156FC 35%, hsl(174, 100%, 50%) 100%); }
+    3% { background: linear-gradient(200deg, #1156FC 35%, hsl(176, 100%, 50%) 100%); }
+    4% { background: linear-gradient(200deg, #1156FC 35%, hsl(179, 100%, 50%) 100%); }
+    5% { background: linear-gradient(200deg, #1156FC 35%, hsl(181, 100%, 50%) 100%); }
+    6% { background: linear-gradient(200deg, #1156FC 35%, hsl(184, 100%, 50%) 100%); }
+    7% { background: linear-gradient(200deg, #1156FC 35%, hsl(186, 100%, 50%) 100%); }
+    8% { background: linear-gradient(200deg, #1156FC 35%, hsl(189, 100%, 50%) 100%); }
+    9% { background: linear-gradient(200deg, #1156FC 35%, hsl(191, 100%, 50%) 100%); }
+    10% { background: linear-gradient(200deg, #1156FC 35%, hsl(193, 100%, 50%) 100%); }
+    11% { background: linear-gradient(200deg, #1156FC 35%, hsl(196, 100%, 50%) 100%); }
+    12% { background: linear-gradient(200deg, #1156FC 35%, hsl(198, 100%, 50%) 100%); }
+    13% { background: linear-gradient(200deg, #1156FC 35%, hsl(201, 100%, 50%) 100%); }
+    14% { background: linear-gradient(200deg, #1156FC 35%, hsl(203, 100%, 50%) 100%); }
+    15% { background: linear-gradient(200deg, #1156FC 35%, hsl(206, 100%, 50%) 100%); }
+    16% { background: linear-gradient(200deg, #1156FC 35%, hsl(208, 100%, 50%) 100%); }
+    17% { background: linear-gradient(200deg, #1156FC 35%, hsl(210, 100%, 50%) 100%); }
+    18% { background: linear-gradient(200deg, #1156FC 35%, hsl(213, 100%, 50%) 100%); }
+    19% { background: linear-gradient(200deg, #1156FC 35%, hsl(215, 100%, 50%) 100%); }
+    20% { background: linear-gradient(200deg, #1156FC 35%, hsl(218, 100%, 50%) 100%); }
+    21% { background: linear-gradient(200deg, #1156FC 35%, hsl(220, 100%, 50%) 100%); }
+    22% { background: linear-gradient(200deg, #1156FC 35%, hsl(223, 100%, 50%) 100%); }
+    23% { background: linear-gradient(200deg, #1156FC 35%, hsl(225, 100%, 50%) 100%); }
+    24% { background: linear-gradient(200deg, #1156FC 35%, hsl(228, 100%, 50%) 100%); }
+    25% { background: linear-gradient(200deg, #1156FC 35%, hsl(230, 100%, 50%) 100%); }
+    26% { background: linear-gradient(200deg, #1156FC 35%, hsl(232, 100%, 50%) 100%); }
+    27% { background: linear-gradient(200deg, #1156FC 35%, hsl(235, 100%, 50%) 100%); }
+    28% { background: linear-gradient(200deg, #1156FC 35%, hsl(237, 100%, 50%) 100%); }
+    29% { background: linear-gradient(200deg, #1156FC 35%, hsl(240, 100%, 50%) 100%); }
+    30% { background: linear-gradient(200deg, #1156FC 35%, hsl(242, 100%, 50%) 100%); }
+    31% { background: linear-gradient(200deg, #1156FC 35%, hsl(245, 100%, 50%) 100%); }
+    32% { background: linear-gradient(200deg, #1156FC 35%, hsl(247, 100%, 50%) 100%); }
+    33% { background: linear-gradient(200deg, #1156FC 35%, hsl(250, 100%, 50%) 100%); }
+    34% { background: linear-gradient(200deg, #1156FC 35%, hsl(252, 100%, 50%) 100%); }
+    35% { background: linear-gradient(200deg, #1156FC 35%, hsl(254, 100%, 50%) 100%); }
+    36% { background: linear-gradient(200deg, #1156FC 35%, hsl(257, 100%, 50%) 100%); }
+    37% { background: linear-gradient(200deg, #1156FC 35%, hsl(259, 100%, 50%) 100%); }
+    38% { background: linear-gradient(200deg, #1156FC 35%, hsl(262, 100%, 50%) 100%); }
+    39% { background: linear-gradient(200deg, #1156FC 35%, hsl(264, 100%, 50%) 100%); }
+    40% { background: linear-gradient(200deg, #1156FC 35%, hsl(267, 100%, 50%) 100%); }
+    41% { background: linear-gradient(200deg, #1156FC 35%, hsl(269, 100%, 50%) 100%); }
+    42% { background: linear-gradient(200deg, #1156FC 35%, hsl(271, 100%, 50%) 100%); }
+    43% { background: linear-gradient(200deg, #1156FC 35%, hsl(274, 100%, 50%) 100%); }
+    44% { background: linear-gradient(200deg, #1156FC 35%, hsl(276, 100%, 50%) 100%); }
+    45% { background: linear-gradient(200deg, #1156FC 35%, hsl(279, 100%, 50%) 100%); }
+    46% { background: linear-gradient(200deg, #1156FC 35%, hsl(281, 100%, 50%) 100%); }
+    47% { background: linear-gradient(200deg, #1156FC 35%, hsl(284, 100%, 50%) 100%); }
+    48% { background: linear-gradient(200deg, #1156FC 35%, hsl(286, 100%, 50%) 100%); }
+    49% { background: linear-gradient(200deg, #1156FC 35%, hsl(289, 100%, 50%) 100%); }
+    50% { background: linear-gradient(200deg, #1156FC 35%, hsl(291, 100%, 50%) 100%); }
+    51% { background: linear-gradient(200deg, #1156FC 35%, hsl(293, 100%, 50%) 100%); }
+    52% { background: linear-gradient(200deg, #1156FC 35%, hsl(296, 100%, 50%) 100%); }
+    53% { background: linear-gradient(200deg, #1156FC 35%, hsl(298, 100%, 50%) 100%); }
+    54% { background: linear-gradient(200deg, #1156FC 35%, hsl(301, 100%, 50%) 100%); }
+    55% { background: linear-gradient(200deg, #1156FC 35%, hsl(303, 100%, 50%) 100%); }
+    56% { background: linear-gradient(200deg, #1156FC 35%, hsl(306, 100%, 50%) 100%); }
+    57% { background: linear-gradient(200deg, #1156FC 35%, hsl(308, 100%, 50%) 100%); }
+    58% { background: linear-gradient(200deg, #1156FC 35%, hsl(311, 100%, 50%) 100%); }
+    59% { background: linear-gradient(200deg, #1156FC 35%, hsl(313, 100%, 50%) 100%); }
+    60% { background: linear-gradient(200deg, #1156FC 35%, hsl(315, 100%, 50%) 100%); }
+    61% { background: linear-gradient(200deg, #1156FC 35%, hsl(318, 100%, 50%) 100%); }
+    62% { background: linear-gradient(200deg, #1156FC 35%, hsl(320, 100%, 50%) 100%); }
+    63% { background: linear-gradient(200deg, #1156FC 35%, hsl(323, 100%, 50%) 100%); }
+    64% { background: linear-gradient(200deg, #1156FC 35%, hsl(325, 100%, 50%) 100%); }
+    65% { background: linear-gradient(200deg, #1156FC 35%, hsl(328, 100%, 50%) 100%); }
+    66% { background: linear-gradient(200deg, #1156FC 35%, hsl(330, 100%, 50%) 100%); }
+    67% { background: linear-gradient(200deg, #1156FC 35%, hsl(332, 100%, 50%) 100%); }
+    68% { background: linear-gradient(200deg, #1156FC 35%, hsl(335, 100%, 50%) 100%); }
+    69% { background: linear-gradient(200deg, #1156FC 35%, hsl(337, 100%, 50%) 100%); }
+    70% { background: linear-gradient(200deg, #1156FC 35%, hsl(340, 100%, 50%) 100%); }
+    71% { background: linear-gradient(200deg, #1156FC 35%, hsl(342, 100%, 50%) 100%); }
+    72% { background: linear-gradient(200deg, #1156FC 35%, hsl(345, 100%, 50%) 100%); }
+    73% { background: linear-gradient(200deg, #1156FC 35%, hsl(347, 100%, 50%) 100%); }
+    74% { background: linear-gradient(200deg, #1156FC 35%, hsl(350, 100%, 50%) 100%); }
+    75% { background: linear-gradient(200deg, #1156FC 35%, hsl(352, 100%, 50%) 100%); }
+    76% { background: linear-gradient(200deg, #1156FC 35%, hsl(354, 100%, 50%) 100%); }
+    77% { background: linear-gradient(200deg, #1156FC 35%, hsl(357, 100%, 50%) 100%); }
+    78% { background: linear-gradient(200deg, #1156FC 35%, hsl(359, 100%, 50%) 100%); }
+    79% { background: linear-gradient(200deg, #1156FC 35%, hsl(2, 100%, 50%) 100%); }
+    80% { background: linear-gradient(200deg, #1156FC 35%, hsl(4, 100%, 50%) 100%); }
+    81% { background: linear-gradient(200deg, #1156FC 35%, hsl(7, 100%, 50%) 100%); }
+    82% { background: linear-gradient(200deg, #1156FC 35%, hsl(9, 100%, 50%) 100%); }
+    83% { background: linear-gradient(200deg, #1156FC 35%, hsl(12, 100%, 50%) 100%); }
+    84% { background: linear-gradient(200deg, #1156FC 35%, hsl(14, 100%, 50%) 100%); }
+    85% { background: linear-gradient(200deg, #1156FC 35%, hsl(16, 100%, 50%) 100%); }
+    86% { background: linear-gradient(200deg, #1156FC 35%, hsl(19, 100%, 50%) 100%); }
+    87% { background: linear-gradient(200deg, #1156FC 35%, hsl(21, 100%, 50%) 100%); }
+    88% { background: linear-gradient(200deg, #1156FC 35%, hsl(24, 100%, 50%) 100%); }
+    89% { background: linear-gradient(200deg, #1156FC 35%, hsl(26, 100%, 50%) 100%); }
+    90% { background: linear-gradient(200deg, #1156FC 35%, hsl(29, 100%, 50%) 100%); }
+    91% { background: linear-gradient(200deg, #1156FC 35%, hsl(31, 100%, 50%) 100%); }
+    92% { background: linear-gradient(200deg, #1156FC 35%, hsl(33, 100%, 50%) 100%); }
+    93% { background: linear-gradient(200deg, #1156FC 35%, hsl(36, 100%, 50%) 100%); }
+    94% { background: linear-gradient(200deg, #1156FC 35%, hsl(38, 100%, 50%) 100%); }
+    95% { background: linear-gradient(200deg, #1156FC 35%, hsl(41, 100%, 50%) 100%); }
+    96% { background: linear-gradient(200deg, #1156FC 35%, hsl(43, 100%, 50%) 100%); }
+    97% { background: linear-gradient(200deg, #1156FC 35%, hsl(46, 100%, 50%) 100%); }
+    98% { background: linear-gradient(200deg, #1156FC 35%, hsl(48, 100%, 50%) 100%); }
+    99% { background: linear-gradient(200deg, #1156FC 35%, hsl(51, 100%, 50%) 100%); }
+    100% { background: linear-gradient(200deg, #1156FC 35%, hsl(53, 100%, 50%) 100%); }
+}
 
 .scene {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
     flex: 1 1 auto;
 
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 
-    margin: 32px 64px;
-    padding: 32px;
+    margin: 32px;
 
     background-image: url(assets/plateau-background.webp);
     background-size: 100% 100%;
@@ -298,22 +444,118 @@ a {
     box-shadow: inset 0 0 10px #000000, 0 0 10px #000000;
 }
 
-.scene--bottom {
+.scene--plateau {
+    flex: 1 1 auto;
+
     display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+}
+
+.scene--guessing__button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 92px;
+    width: 92px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, .85);
+
+    font-size: 56px;
+
+    transition: background-color linear 100ms, box-shadow linear 200ms;
+}
+
+.scene--guessing__button:hover {
+    box-shadow: 0 0 15px rgba(255, 255, 255, .25);
 }
 
 .scene--opponent {
-    margin: 0 32px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+
+    padding: 32px;
+
+    background-color: #1156FC;
+
+    border-radius: 0 6px 0 0;
+    border: 20px solid #ffffff;
+    box-shadow: inset 0 0 10px #000000, 0 0 10px #000000;
+    border-left: 0;
+    border-bottom: 0;
 }
 
 .scene--opponent,
 .scene--opponent .character {
+    display: flex;
     width: 157px;
     height: 293px;
+
 }
 
-.scene--guessing .character--box:hover {
+.scene--characterguessed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9000;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+}
+
+.scene--characterguessed__content {
+    background-color: rgba(0, 0, 0, .85);
+    border-radius: 0 0 8px 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 16px;
+
+    font-family: "Futura PT";
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.scene--characterguessed__name {
+    font-family: "Permanent Marker";
+    font-weight: 500;
+}
+
+.scene--characterguessed__content button {
+    margin: 0;
+    margin-top: 16px;
+}
+
+.scene--guessing .character--box:not(.character--box__hiden):hover {
     box-shadow: 0 0 15px #ffffff;
+}
+
+.scene--guessing .character--box:not(:hover) {
+    filter: brightness(0.7);
+}
+
+.scene--guessing .character--box.character--box__hiden {
+    filter: brightness(0.7);
+}
+
+.scene--guessing .scene--guessing__button {
+    background-color: #000000;
+}
+
+.scene--guessing .scene--guessing__button svg {
+    fill: #E0E300;
 }
 
 .logout {
