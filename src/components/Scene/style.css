@@ -1,12 +1,18 @@
 .scene {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
     flex: 1 1 auto;
 
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 
-    margin: 32px 64px;
-    padding: 32px;
+    margin: 32px;
 
     background-image: url(../../../assets/plateau-background.webp);
     background-size: 100% 100%;
@@ -18,20 +24,116 @@
     box-shadow: inset 0 0 10px #000000, 0 0 10px #000000;
 }
 
-.scene--bottom {
+.scene--plateau {
+    flex: 1 1 auto;
+
     display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+}
+
+.scene--guessing__button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 92px;
+    width: 92px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, .85);
+
+    font-size: 56px;
+
+    transition: background-color linear 100ms, box-shadow linear 200ms;
+}
+
+.scene--guessing__button:hover {
+    box-shadow: 0 0 15px rgba(255, 255, 255, .25);
 }
 
 .scene--opponent {
-    margin: 0 32px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+
+    padding: 32px;
+
+    background-color: #1156FC;
+
+    border-radius: 0 6px 0 0;
+    border: 20px solid #ffffff;
+    box-shadow: inset 0 0 10px #000000, 0 0 10px #000000;
+    border-left: 0;
+    border-bottom: 0;
 }
 
 .scene--opponent,
 .scene--opponent .character {
+    display: flex;
     width: 157px;
     height: 293px;
+
 }
 
-.scene--guessing .character--box:hover {
+.scene--characterguessed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9000;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+}
+
+.scene--characterguessed__content {
+    background-color: rgba(0, 0, 0, .85);
+    border-radius: 0 0 8px 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 16px;
+
+    font-family: "Futura PT";
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.scene--characterguessed__name {
+    font-family: "Permanent Marker";
+    font-weight: 500;
+}
+
+.scene--characterguessed__content button {
+    margin: 0;
+    margin-top: 16px;
+}
+
+.scene--guessing .character--box:not(.character--box__hiden):hover {
     box-shadow: 0 0 15px #ffffff;
+}
+
+.scene--guessing .character--box:not(:hover) {
+    filter: brightness(0.7);
+}
+
+.scene--guessing .character--box.character--box__hiden {
+    filter: brightness(0.7);
+}
+
+.scene--guessing .scene--guessing__button {
+    background-color: #000000;
+}
+
+.scene--guessing .scene--guessing__button svg {
+    fill: #E0E300;
 }

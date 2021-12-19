@@ -28,12 +28,41 @@ export const getApolloClient = selector({
     dangerouslyAllowMutability: true,
 });
 
+export const getChannelId = selector<string>({
+    key: "getChannelId",
+    get: () => {
+        const channel = getQueryParams()?.channel || crypto.getRandomValues(new Uint32Array(1))[0].toString();
+
+        console.log(channel);
+
+        return channel;
+    },
+});
+
 export const getChannel = selector({
     key: "getChannel",
     get: ({ get }) => {
-        const client = get(getAblyClient);
+        const channelId = get(getChannelId);
+        const client    = get(getAblyClient);
 
-        return client.channels.get("qui-est-ce");
+        return client.channels.get("qui-est-ce-" + channelId);
     },
     dangerouslyAllowMutability: true,
 });
+
+const getQueryParams = (): { channel: string } | undefined => {
+    if (!window.location.search.length) {
+        return;
+    }
+
+    const search = window.location.search.slice(1);
+
+    return search.split("&").reduce((previous: any, current) => {
+        const key = current.split("=")[0];
+        const value = current.split("=")[1];
+
+        previous[key] = value;
+
+        return previous;
+    }, {});
+}

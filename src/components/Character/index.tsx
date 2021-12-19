@@ -6,6 +6,7 @@ import { ComputedBounds } from "@components/Plateau";
 import "./style.css";
 
 export interface CharacterProps {
+    id    : string,
     name  : string,
     image : string,
 }
@@ -15,7 +16,6 @@ export interface CharacterPositionProps extends ComputedBounds {
 }
 
 export const Character = ({
-    animate,
     animateDelay,
     character,
     position,
@@ -24,19 +24,14 @@ export const Character = ({
 }: {
     character : CharacterProps,
 
-    animate      ? : boolean,
     animateDelay ? : number,
     position     ? : CharacterPositionProps,
     hide         ? : boolean,
-    onClick      ? : (character: CharacterProps) => void,
+    onClick      ? : (character: CharacterProps, hidden ?: boolean) => void,
 }) => {
     const { name } = character;
 
-    const className = ["character"];
-
-    if (hide) {
-        className.push("character_hide");
-    }
+    const className = ["character--box"];
 
     let style: React.CSSProperties | undefined;
 
@@ -47,26 +42,44 @@ export const Character = ({
         };
     }
 
-    const variants = {
-        hidden  : { y: "73%" },
+    const parentVariants = {
+        hidden  : { zIndex: position?.zIndex },
+        visible : { zIndex: position?.zIndex },
+    }
+
+    const childVariants = {
+        hidden  : { y: "65%" },
         visible : (custom ?: number) => ({
-            y: 0,
-            transition: { delay: (custom ?? 1) * 0.07 }
+            y          : 0,
+            transition : { delay: (custom ?? 1) * 0.07 },
         }),
     }
 
+    if (hide) {
+        className.push("character--box__hiden")
+    }
+
+
     return (
-        <div className={ className.join(" ") } style={ style }>
-            <AnimatePresence>
+        <AnimatePresence>
+            <motion.div
+                className="character"
+                style={ style }
+                transition={{ delay: hide ? 0.3 : 0 }}
+                initial="visible"
+                animate={ hide ? "hidden" : "visible" }
+                variants={ parentVariants }
+                exit={ parentVariants.hidden }
+            >
                 <motion.div
                     custom={ animateDelay }
-                    className="character--box"
+                    className={ className.join(" ") }
                     transition={{ duration: 0.5 }}
                     initial="hidden"
-                    animate={ "visible" }
-                    variants={ variants }
-                    exit={ variants.hidden }
-                    onClick={ () => onClick && onClick(character) }
+                    animate={ hide ? "hidden" : "visible" }
+                    variants={ childVariants }
+                    exit={ childVariants.hidden }
+                    onClick={ () => onClick && onClick(character, hide) }
                 >
                     <div className="character--box__background">
                         <img src="assets/case-background.webp" />
@@ -82,7 +95,7 @@ export const Character = ({
 
                     <div className="character--box__name">{ name }</div>
                 </motion.div>
-            </AnimatePresence>
-        </div>
+            </motion.div>
+        </AnimatePresence>
     );
 }

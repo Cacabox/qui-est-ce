@@ -27,7 +27,7 @@ export const Client = () => {
             setPlayers(players);
 
             presence.subscribe("enter", (client) => {
-                if (!players.find((player) =>  player.name === client.clientId)) {
+                if (!players.find((player) => player.name === client.clientId)) {
                     players = [
                         ...players,
                         {
@@ -38,6 +38,12 @@ export const Client = () => {
 
                     setPlayers(players);
                 }
+            });
+
+            presence.subscribe("leave", (client) => {
+                players = players.filter(player => player.name !== client.clientId);
+
+                setPlayers(players);
             });
 
             await presence.enter();

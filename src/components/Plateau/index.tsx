@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Character, CharacterPositionProps, CharacterProps } from "@components/Character";
 
@@ -26,10 +26,12 @@ const imageSize = {
 
 export const Plateau = ({
     characters,
+    charactersHidden,
     onClick,
 }: {
-    characters : CharacterProps[]
-    onClick   ?: (character: CharacterProps) => void,
+    characters        : CharacterProps[],
+    charactersHidden ?: CharacterProps[],
+    onClick          ?: (character: CharacterProps, isHidden ?: boolean) => void,
 }) => {
     const rowPosition: Bounds[] = [{
         y       : 173,
@@ -52,6 +54,8 @@ export const Plateau = ({
     }];
 
     const rowSpacing = [32, 21, 11];
+
+    const [clicked] = useState(new Map<CharacterProps, boolean>())
 
     const computeBounds = (bounds: Bounds, relative: Pick<Bounds, "width" | "height" | "padding">): ComputedBounds => {
         let tempBounds = { ...bounds };
@@ -88,7 +92,7 @@ export const Plateau = ({
         }
     }
 
-    const getPosition = (row: number, column: number): CharacterPositionProps => {
+    const getPosition = (row: number, column: number, character: CharacterProps): CharacterPositionProps => {
         const width = (rowPosition[row].width - (rowSpacing[row] * 7)) / 8;
 
         const bounds: Bounds = {
@@ -98,14 +102,21 @@ export const Plateau = ({
             height: rowPosition[row].height,
         };
 
+        const isHidden = charactersHidden && charactersHidden.includes(character);
+
         return {
             ...computeBounds(bounds, rowPosition[row]),
-            zIndex : column,
+            zIndex : isHidden
+                ? characters.length - (row * 10) + column
+                : 100 + (row * 10) + column,
         }
     }
 
-    // const getDelay = (position: number) => {
-    const getDelay = (row: number, column: number) => {
+    const getDelay = (row: number, column: number, character: CharacterProps) => {
+        if (clicked.get(character)) {
+            return 1;
+        }
+
         const isRowOdd = (row % 2) === 1;
 
         if (!isRowOdd) {
@@ -130,15 +141,15 @@ export const Plateau = ({
             <img src="assets/plateau-front.webp" alt="Plateau" />
 
             { charactersPerRow.map((row, rowIndex) =>
-                <div className="plateau--row" key={ rowIndex } style={{ ...computeBounds(rowPosition[rowIndex], imageSize), zIndex: 500 + (rowIndex * 100) }}>
+                <div className="plateau--row" key={ rowIndex } style={{ ...computeBounds(rowPosition[rowIndex], imageSize) }}>
                     { row.map((character, index) =>
                         <Character
                             key={ index }
-                            animate={ true }
-                            animateDelay={ getDelay(rowIndex, index) }
+                            animateDelay={ getDelay(rowIndex, index, character) }
                             character={ character }
-                            position={ getPosition(rowIndex, index) }
-                            onClick={ onClick }
+                            position={ getPosition(rowIndex, index, character) }
+                            hide={ charactersHidden && charactersHidden.includes(character) }
+                            onClick={ clicked.set(character, true) && onClick }
                         />
                     )}
                 </div>

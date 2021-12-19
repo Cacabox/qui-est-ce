@@ -62,3 +62,7 @@
     display: flex;
     flex-direction: column;
 }
+
+.choosecharacter--modal__container .character--box:hover {
+    box-shadow: 0 0 16px #ffffff;
+}

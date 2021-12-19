@@ -1,15 +1,19 @@
 {
     "translation": {
         "choosecharacter": {
-            "title": "Choisi le personnage que ton adversaire doit découvrir"
+            "title": "Choisis la carte pour ton adversaire"
         },
         "lobby": {
+            "link": "Copier le lien de la room",
+            "link-clicked": "Copié",
             "start": "Commencer une partie",
+            "toomanyplayers": "Il y a plus de 2 joueurs dans la room",
             "waiting": "En attente de l'adversaire"
         },
         "plateau": {
             "guess": "Est-ce que c'est",
-            "no": "Non"
+            "no": "Non",
+            "yes": "Oui"
         }
     }
 }

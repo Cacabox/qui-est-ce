@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 import { Character, CharacterProps } from "@components/Character";
-import { ChooseCharacter } from "@components/ChooseCharacter";
+import { Plateau } from "@components/Plateau";
 
 import { getChannel } from "@helpers/client";
 import { getRoundOpponentSelectedCharacter, publishRoundCharacters } from "@helpers/round";
 import { getSettings } from "@helpers/settings";
 
 import "./style.css";
-import { Plateau } from "@components/Plateau";
 
 export const Scene = () => {
     const channel = useRecoilValue(getChannel);
@@ -21,23 +21,27 @@ export const Scene = () => {
 
     const opponentCharacter  = useRecoilValue(getRoundOpponentSelectedCharacter);
 
-    const [hideCharacters, setHideCharacters] = useState<CharacterProps[]>([])
-    const [isGuessing, setGuess]              = useState<boolean>(false);
+    const [charactersHidden, setCharactersHidden] = useState<CharacterProps[]>([]);
+    const [isGuessing, setGuess]                  = useState<boolean>(false);
 
     const [characterGuessed, setCharacterGuess] = useState<CharacterProps | undefined>(undefined);
 
-    const characterGuess = (character: CharacterProps) => {
+    const characterGuess = (character: CharacterProps, isHidden?: boolean) => {
+        if (isHidden) {
+            return;
+        }
+
         channel.publish("guess", character);
 
         setGuess(false);
     }
 
     const characterSelect = (character: CharacterProps) => {
-        if (hideCharacters.includes(character)) {
-            return setHideCharacters(hideCharacters.filter((hideCharacter) => hideCharacter !== character));
+        if (charactersHidden.includes(character)) {
+            return setCharactersHidden(charactersHidden.filter((_) => _ !== character));
         }
 
-        setHideCharacters([ ...hideCharacters, character ]);
+        setCharactersHidden([ ...charactersHidden, character ]);
     }
 
     useEffect(() => {
@@ -48,43 +52,67 @@ export const Scene = () => {
         });
     }, [channel]);
 
-    const className = ["scene"];
+    const className = ["scene--plateau"];
 
     if (isGuessing) {
         className.push("scene--guessing");
     }
 
+    const variants = {
+        hidden  : { y: "-100%" },
+        visible : { y: 0 },
+    }
+
     const { t } = useTranslation();
 
     return (
-        <>
+        <div className="scene">
             <div className={ className.join(" ") }>
-                {/* { characters.map((character, index) =>
-                    <Character key={ index } character={ character } hide={ hideCharacters.includes(character) } onClick={ isGuessing ? characterGuess : characterSelect } />
-                )} */}
+                <Plateau characters={ characters } charactersHidden={ charactersHidden } onClick={ isGuessing ? characterGuess : characterSelect } />
 
-                <Plateau characters={ characters } />
+                <AnimatePresence>
+                    <motion.button
+                        className="scene--guessing__button"
+                        onClick={ () => setGuess(!isGuessing) }
+                    >
+                        { isGuessing
+                            ? <svg height="48" width="48" viewBox="0 0 24 24"><path d="M13.427 3.021h-7.427v-3.021l-6 5.39 6 5.61v-3h7.427c3.071 0 5.561 2.356 5.561 5.427 0 3.071-2.489 5.573-5.561 5.573h-7.427v5h7.427c5.84 0 10.573-4.734 10.573-10.573s-4.733-10.406-10.573-10.406z"/></svg>
+                            : "?"
+                        }
+                    </motion.button>
+                </AnimatePresence>
             </div>
 
-            <div className="scene--bottom">
-                { opponentCharacter &&
-                    <div className="scene--opponent">
-                        <Character character={ opponentCharacter } />
+            { opponentCharacter &&
+                <div className="scene--opponent">
+                    <Character character={ opponentCharacter } />
+                </div>
+            }
+
+            <AnimatePresence>
+                { characterGuessed &&
+                    <div className="scene--characterguessed">
+                        <motion.div
+                            className="scene--characterguessed__content"
+                            transition={{ duration: 0.3 }}
+                            initial="hidden"
+                            animate="visible"
+                            variants={ variants }
+                            exit={ variants.hidden }
+                        >
+                            <div>{ t("plateau.guess") } <span className="scene--characterguessed__name">{ characterGuessed.name }</span> ?</div>
+
+                            { characterGuessed.id === opponentCharacter?.id &&
+                                <button onClick={ () => setCharacterGuess(undefined) }>{ t("plateau.yes") }</button>
+                            }
+
+                            { characterGuessed.id !== opponentCharacter?.id &&
+                                <button onClick={ () => setCharacterGuess(undefined) }>{ t("plateau.no") }</button>
+                            }
+                        </motion.div>
                     </div>
                 }
-
-                <div>
-                    <button onClick={ () => setGuess(!isGuessing) }>{ isGuessing ? "Annuler" : "Je devine" }</button>
-
-                    { characterGuessed &&
-                        <div>
-                            { t("plateau.guess") } { characterGuessed.name } ?
-
-                            <button onClick={ () => setCharacterGuess(undefined) }>{ t("plateau.no") }</button>
-                        </div>
-                    }
-                </div>
-            </div>
-        </>
+            </AnimatePresence>
+        </div>
     );
 }
