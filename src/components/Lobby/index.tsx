@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 import type { CharacterProps } from "@components/Character";
@@ -10,12 +11,15 @@ import { getPlayers } from "@helpers/players";
 import { getRoundCharactersOpponent, publishRoundCharacters, roundStateAtom } from "@helpers/round";
 
 import "./style.css";
+import { getCategories } from "@helpers/categories";
 
 export const Lobby = () => {
+    const categories         = useRecoilValue(getCategories);
     const channelId          = useRecoilValue(getChannelId);
     const characters         = useRecoilValue(getCharacters);
     const charactersOpponent = useRecoilValue(getRoundCharactersOpponent);
     const players            = useRecoilValue(getPlayers);
+
 
     const [charactersPlayer, setPublishCharactersPlayer] = useRecoilState(publishRoundCharacters);
 
@@ -59,6 +63,11 @@ export const Lobby = () => {
         }
     }, [roomLinkClicked]);
 
+    const variants = {
+        hidden  : { y: "-100%" },
+        visible : { y: 0 },
+    }
+
     if (players.length < 2) {
         return (
             <div className="lobby">
@@ -74,8 +83,40 @@ export const Lobby = () => {
             <button className="lobby--start" onClick={ () => startRound() }>{ t("lobby.start") }</button>
 
             { players.length > 2 &&
-                <div className="lobby--toomanyplayers">{ t("lobby.toomanyplayers") }</div>
+                <div className="lobby--toomanyplayers">{ t("lobby.too-many-players") }</div>
             }
+
+            {/* <AnimatePresence>
+                <motion.div
+                    className="lobby--categories"
+                    transition={{ duration: 0.3 }}
+                    initial="hide"
+                    animate="visible"
+                    variants={ variants }
+                    exit={ variants.hidden }
+                >
+                    { t("lobby.choose-categories") }
+
+                    <div className="lobby--categories__container">
+                        <label className="lobby--categories__label">
+                            <input type="checkbox" className="lobby--categories__checkbox" defaultChecked />
+
+                            { t("lobby.all-categories") }
+                        </label>
+
+                        { categories.map((categorie, index) => {
+
+                            return (
+                                <label key={ index } className="lobby--categories__label">
+                                    <input type="checkbox" className="lobby--categories__checkbox" defaultChecked />
+
+                                    { categorie }
+                                </label>
+                            );
+                        }) }
+                    </div>
+                </motion.div>
+            </AnimatePresence> */}
         </div>
     );
 }

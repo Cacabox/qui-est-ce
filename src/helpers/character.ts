@@ -10,9 +10,10 @@ export type CharacterStatus = "show" | "hide";
 interface getPersonnagesQuery {
     data: {
         personages: [{
-            id    : string,
-            nom   : string,
-            image : { url: string }
+            id         : string,
+            nom        : string,
+            categories : { nom: string }[],
+            image      : { url: string } | null,
         }]
     }
 }
@@ -28,6 +29,9 @@ export const getCharacters = selector<CharacterProps[]>({
                     personages {
                         id
                         nom
+                        categories {
+                            nom
+                        }
                         image {
                             url
                         }
@@ -36,13 +40,18 @@ export const getCharacters = selector<CharacterProps[]>({
             `
         });
 
-        const characters = personages.map((personage):CharacterProps => {
-            return {
-                id    : personage.id,
-                name  : personage.nom,
-                image : personage.image.url,
+        const characters = personages.map((personage): CharacterProps | undefined => {
+            if (!personage.image) {
+                return;
             }
-        });
+
+            return {
+                id         : personage.id,
+                name       : personage.nom,
+                categories : personage.categories.map(_ => _.nom),
+                image      : personage.image.url,
+            }
+        }).filter(_ => _ !== undefined);
 
         return shuffle([...characters]);
     },

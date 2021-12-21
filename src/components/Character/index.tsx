@@ -6,9 +6,10 @@ import { ComputedBounds } from "@components/Plateau";
 import "./style.css";
 
 export interface CharacterProps {
-    id    : string,
-    name  : string,
-    image : string,
+    id         : string,
+    name       : string,
+    image      : string,
+    categories : string[],
 }
 
 export interface CharacterPositionProps extends ComputedBounds {
@@ -85,9 +86,7 @@ export const Character = ({
                         <img src="assets/case-background.webp" />
                     </div>
 
-                    <div className="character--box__image">
-                        <img src={ character.image } alt={ name } />
-                    </div>
+                    <div className="character--box__image" style={{ backgroundImage: `url(${ character.image })` }} />
 
                     <div className="character--box__front">
                         <img src="assets/case-front.webp" />
