@@ -1,0 +1,11 @@
+.finished {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
+    animation: colorTransition 5s alternate infinite;
+}

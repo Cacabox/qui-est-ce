@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 
 import { ChooseCharacter } from "@components/ChooseCharacter";
 import { Client } from "@components/Client";
+import { Finished } from "@components/Finished";
 import { LoadAssets } from "@components/LoadAssets";
 import { Lobby } from "@components/Lobby";
 import { Scene } from "@components/Scene";
@@ -28,7 +29,6 @@ const Game = () => {
 
     switch(roundState) {
         case "not-started":
-        case "finished":
             return <Lobby />
 
         case "choose-character":
@@ -36,5 +36,8 @@ const Game = () => {
 
         case "running":
             return <Scene />
+
+        case "finished":
+            return <Finished />
     }
 }

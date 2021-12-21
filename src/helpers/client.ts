@@ -33,8 +33,6 @@ export const getChannelId = selector<string>({
     get: () => {
         const channel = getQueryParams()?.channel || crypto.getRandomValues(new Uint32Array(1))[0].toString();
 
-        console.log(channel);
-
         return channel;
     },
 });
@@ -45,7 +43,7 @@ export const getChannel = selector({
         const channelId = get(getChannelId);
         const client    = get(getAblyClient);
 
-        return client.channels.get("qui-est-ce-" + channelId);
+        return client.channels.get("[?rewind=100]qui-est-ce-" + channelId);
     },
     dangerouslyAllowMutability: true,
 });

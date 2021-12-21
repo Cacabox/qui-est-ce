@@ -1,37 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import React, { useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
+import { ClientEvent } from "@components/Client";
 import { Character, CharacterProps } from "@components/Character";
 import { Plateau } from "@components/Plateau";
 
 import { getChannel } from "@helpers/client";
-import { getRoundOpponentSelectedCharacter, publishRoundCharacters } from "@helpers/round";
-import { getSettings } from "@helpers/settings";
+import { getRoundCharacterToGuess, getRoundCharacterGuessed, publishRoundCharacters, publishRoundState } from "@helpers/round";
 
 import "./style.css";
 
 export const Scene = () => {
     const channel = useRecoilValue(getChannel);
 
-    const settings = useRecoilValue(getSettings);
+    const charactersPlayer = useRecoilValue(publishRoundCharacters);
+    const characterToGuess = useRecoilValue(getRoundCharacterToGuess);
 
-    const characters = useRecoilValue(publishRoundCharacters);
+    const [characterGuessed, setCharacterGuessed] = useRecoilState(getRoundCharacterGuessed);
 
-    const opponentCharacter  = useRecoilValue(getRoundOpponentSelectedCharacter);
+    const setPublishRoundState = useSetRecoilState(publishRoundState);
 
     const [charactersHidden, setCharactersHidden] = useState<CharacterProps[]>([]);
     const [isGuessing, setGuess]                  = useState<boolean>(false);
-
-    const [characterGuessed, setCharacterGuess] = useState<CharacterProps | undefined>(undefined);
 
     const characterGuess = (character: CharacterProps, isHidden?: boolean) => {
         if (isHidden) {
             return;
         }
 
-        channel.publish("guess", character);
+        channel.publish(ClientEvent.guess, character);
 
         setGuess(false);
     }
@@ -44,13 +43,11 @@ export const Scene = () => {
         setCharactersHidden([ ...charactersHidden, character ]);
     }
 
-    useEffect(() => {
-        channel.subscribe("guess", ({ data: guess, clientId }: { data: CharacterProps, clientId: string }) => {
-            if (clientId !== settings.clientId) {
-                setCharacterGuess(guess);
-            }
-        });
-    }, [channel]);
+    const loose = () => {
+        setCharacterGuessed(undefined);
+
+        setPublishRoundState("finished");
+    }
 
     const className = ["scene--plateau"];
 
@@ -68,7 +65,7 @@ export const Scene = () => {
     return (
         <div className="scene">
             <div className={ className.join(" ") }>
-                <Plateau characters={ characters } charactersHidden={ charactersHidden } onClick={ isGuessing ? characterGuess : characterSelect } />
+                <Plateau characters={ charactersPlayer } charactersHidden={ charactersHidden } onClick={ isGuessing ? characterGuess : characterSelect } />
 
                 <AnimatePresence>
                     <motion.button
@@ -83,9 +80,9 @@ export const Scene = () => {
                 </AnimatePresence>
             </div>
 
-            { opponentCharacter &&
+            { characterToGuess &&
                 <div className="scene--opponent">
-                    <Character character={ opponentCharacter } />
+                    <Character character={ characterToGuess } />
                 </div>
             }
 
@@ -102,12 +99,12 @@ export const Scene = () => {
                         >
                             <div>{ t("plateau.guess") } <span className="scene--characterguessed__name">{ characterGuessed.name }</span> ?</div>
 
-                            { characterGuessed.id === opponentCharacter?.id &&
-                                <button onClick={ () => setCharacterGuess(undefined) }>{ t("plateau.yes") }</button>
+                            { characterGuessed.id === characterToGuess?.id &&
+                                <button onClick={ () => loose() }>{ t("plateau.yes") }</button>
                             }
 
-                            { characterGuessed.id !== opponentCharacter?.id &&
-                                <button onClick={ () => setCharacterGuess(undefined) }>{ t("plateau.no") }</button>
+                            { characterGuessed.id !== characterToGuess?.id &&
+                                <button onClick={ () => setCharacterGuessed(undefined) }>{ t("plateau.no") }</button>
                             }
                         </motion.div>
                     </div>

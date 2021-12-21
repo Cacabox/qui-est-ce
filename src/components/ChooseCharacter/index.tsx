@@ -2,21 +2,21 @@ import React from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
-import { CharacterProps } from "@components/Character";
+import type { CharacterProps } from "@components/Character";
 import { Plateau } from "@components/Plateau";
 
-import { getRoundOpponentCharacters, getRoundOpponentSelectedCharacter, roundStateAtom } from "@helpers/round";
+import { getRoundCharactersOpponent, getRoundCharacterToGuess, roundStateAtom } from "@helpers/round";
 
 import "./style.css";
 
 export const ChooseCharacter = () => {
-    const setOpponentCharacter = useSetRecoilState(getRoundOpponentSelectedCharacter);
-    const setRoundState        = useSetRecoilState(roundStateAtom);
+    const setCharacterToGuess = useSetRecoilState(getRoundCharacterToGuess);
+    const setRoundState       = useSetRecoilState(roundStateAtom);
 
-    const opponentCharacters = useRecoilValue(getRoundOpponentCharacters);
+    const opponentCharacters = useRecoilValue(getRoundCharactersOpponent);
 
     const choose = (character: CharacterProps) => {
-        setOpponentCharacter(character);
+        setCharacterToGuess(character);
         setRoundState("running");
     };
 

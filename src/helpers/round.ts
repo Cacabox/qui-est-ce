@@ -1,9 +1,9 @@
 import { atom, selector } from "recoil";
 
-import { getCharacters } from "@helpers/character";
 import { getChannel } from "@helpers/client";
 
 import type { CharacterProps } from "@components/Character";
+import { ClientEvent } from "@components/Client";
 
 export type RoundState = "not-started" | "choose-character" | "running" | "finished";
 
@@ -21,33 +21,9 @@ export const publishRoundState = selector<RoundState>({
         if (oldValue !== newValue) {
             const channel = get(getChannel);
 
-            channel.publish("roundState", newValue);
+            channel.publish(ClientEvent.state, newValue);
         }
     }
-});
-
-export const getRoundOpponentSelectedCharacter = atom<CharacterProps | undefined>({
-    key     : "getRoundOpponentSelectedCharacter",
-    default : undefined,
-});
-
-export const getRoundOpponentCharacters = atom<CharacterProps[]>({
-    key     : "getRoundOpponentCharacters",
-    default : []
-});
-
-export const getRoundPossibleCharacters = selector<CharacterProps[]>({
-    key: "getRoundPossibleCharacters",
-    get: ({ get }) => {
-        const characters = get(getCharacters);
-        const filtered   = get(getRoundOpponentCharacters);
-
-        if (filtered.length === 0) {
-            return characters;
-        }
-
-        return characters.filter((character) => !filtered.includes(character));
-    },
 });
 
 const roundCharactersAtom = atom<CharacterProps[]>({
@@ -63,6 +39,21 @@ export const publishRoundCharacters = selector<CharacterProps[]>({
 
         set(roundCharactersAtom, newValue);
 
-        channel.publish("roundCharacters", newValue);
+        channel.publish(ClientEvent.characters, newValue);
     }
+});
+
+export const getRoundCharactersOpponent = atom<CharacterProps[]>({
+    key     : "getRoundCharactersOpponent",
+    default : []
+});
+
+export const getRoundCharacterToGuess = atom<CharacterProps | undefined>({
+    key     : "getRoundCharacterToGuess",
+    default : undefined,
+});
+
+export const getRoundCharacterGuessed = atom<CharacterProps | undefined>({
+    key     : "roundCharacterGuessedAtom",
+    default : undefined,
 });

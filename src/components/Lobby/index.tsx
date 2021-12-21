@@ -2,37 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
-import { CharacterProps } from "@components/Character";
+import type { CharacterProps } from "@components/Character";
 
-import { getChannel, getChannelId } from "@helpers/client";
+import { getCharacters } from "@helpers/character";
+import { getChannelId } from "@helpers/client";
 import { getPlayers } from "@helpers/players";
-import { getRoundPossibleCharacters, getRoundOpponentCharacters, publishRoundCharacters, publishRoundState, RoundState, roundStateAtom } from "@helpers/round";
-import { getSettings } from "@helpers/settings";
+import { getRoundCharactersOpponent, publishRoundCharacters, roundStateAtom } from "@helpers/round";
 
 import "./style.css";
 
 export const Lobby = () => {
-    const channel   = useRecoilValue(getChannel);
-    const channelId = useRecoilValue(getChannelId);
-    const settings  = useRecoilValue(getSettings);
+    const channelId          = useRecoilValue(getChannelId);
+    const characters         = useRecoilValue(getCharacters);
+    const charactersOpponent = useRecoilValue(getRoundCharactersOpponent);
+    const players            = useRecoilValue(getPlayers);
 
-    const players = useRecoilValue(getPlayers);
+    const [charactersPlayer, setPublishCharactersPlayer] = useRecoilState(publishRoundCharacters);
 
-    const roundPossibleCharacters = useRecoilValue(getRoundPossibleCharacters);
-
-    const [roundCharacters, setPublishRoundCharacters] = useRecoilState(publishRoundCharacters);
-
-    const setPublishRoundState       = useSetRecoilState(publishRoundState);
-    const setRoundOpponentCharacters = useSetRecoilState(getRoundOpponentCharacters);
-    const setRoundState              = useSetRecoilState(roundStateAtom);
+    const setRoundState = useSetRecoilState(roundStateAtom);
 
     const [roomLinkClicked, setRoomLinkClicked] = useState(false);
 
-    const generateCharacters = () => shuffle([ ...roundPossibleCharacters ]).slice(0, 8 * 3);
-
-    const startRound = () => {
-        setPublishRoundCharacters(generateCharacters());
-    }
+    const { t } = useTranslation();
 
     const copyLinkRoom = () => {
         setRoomLinkClicked(true);
@@ -40,31 +31,25 @@ export const Lobby = () => {
         window.navigator.clipboard.writeText(`${ window.origin }/?channel=${ channelId }`);
     }
 
-    const { t } = useTranslation();
+    const generateCharacters = (): CharacterProps[] => {
+        return characters.filter((character) => !charactersOpponent.includes(character)).slice(0, 8 * 3);
+    }
+
+    const startRound = () => {
+        setPublishCharactersPlayer(generateCharacters());
+    }
 
     useEffect(() => {
-        channel.subscribe("roundState", ({ data: roundState }: { data: RoundState }) => {
-            setRoundState(roundState);
-        });
-    }, [channel]);
-
-    useEffect(() => {
-        const listener = ({ data, clientId }: { data: CharacterProps[], clientId: string }) => {
-            if (clientId !== settings.clientId) {
-                setRoundOpponentCharacters(data);
-
-                if (roundCharacters.length === 0) {
-                    setPublishRoundCharacters(generateCharacters());
-
-                    setPublishRoundState("choose-character");
-                }
+        if (charactersOpponent.length > 0) {
+            if (charactersPlayer.length === 0) {
+                setPublishCharactersPlayer(generateCharacters());
             }
-        };
 
-        channel.subscribe("roundCharacters", listener);
-
-        return () => channel.unsubscribe("roundCharacters", listener);
-    }, [channel, roundCharacters]);
+            if (charactersPlayer.length > 0) {
+                setRoundState("choose-character");
+            }
+        }
+    }, [charactersPlayer, charactersOpponent]);
 
     useEffect(() => {
         if (roomLinkClicked) {
@@ -93,17 +78,4 @@ export const Lobby = () => {
             }
         </div>
     );
-}
-
-// From : https://github.com/d3/d3-array/blob/main/src/shuffle.js
-function shuffle(array: any[], i0 = 0, i1 = array.length) {
-    let m = i1 - (i0 = +i0);
-
-    while (m) {
-        const i = Math.random() * m-- | 0, t = array[m + i0];
-        array[m + i0] = array[i + i0];
-        array[i + i0] = t;
-    }
-
-    return array;
 }

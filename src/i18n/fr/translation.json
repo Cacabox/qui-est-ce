@@ -3,6 +3,9 @@
         "choosecharacter": {
             "title": "Choisis la carte pour ton adversaire"
         },
+        "finished": {
+            "start-again": "Nouvelle game ?"
+        },
         "lobby": {
             "link": "Copier le lien de la room",
             "link-clicked": "Copié",
