@@ -326,6 +326,30 @@ a {
     font-size: 24px;
 }
 
+.lobby--categories {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    bottom: 0;
+
+    padding: 32px 0;
+}
+
+.lobby--categories__container {
+    display: flex;
+    flex-direction: column;
+
+    padding: 8px 16px;
+
+    background-color: #1156FC;
+    border: 2px solid #E0E300;
+    border-radius: 4px;
+
+    font-family: "Futura PT";
+    font-size: 20px;
+}
+
 @keyframes colorTransition {
     0% { background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%); }
     1% { background: linear-gradient(200deg, #1156FC 35%, hsl(171, 100%, 50%) 100%); }
