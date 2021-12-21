@@ -28,7 +28,7 @@ export const Lobby = () => {
     const copyLinkRoom = () => {
         setRoomLinkClicked(true);
 
-        window.navigator.clipboard.writeText(`${ window.origin }/?channel=${ channelId }`);
+        window.navigator.clipboard.writeText(`${ window.location.origin }${ window.location.pathname }?channel=${ channelId }`);
     }
 
     const generateCharacters = (): CharacterProps[] => {
