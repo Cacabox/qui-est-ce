@@ -165,6 +165,10 @@ a {
     bottom: 22.299651567944252%;
     /* left: (38 / 468) * 100; */
     left: 8.11965811965812%;
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 .character--box__image img {
