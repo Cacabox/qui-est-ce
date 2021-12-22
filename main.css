@@ -49,8 +49,8 @@
 }
 
 @font-face {
-    font-family: "Permanent Marker";
-    src: url(assets/PermanentMarker-Regular.ttf) format("truetype");
+    font-family: "Sweaty Belvin";
+    src: url(assets/SweatyBelvin.ttf) format("truetype");
     font-weight: 500;
     font-style: normal;
 }
@@ -61,7 +61,7 @@ body,
     margin: 0;
     padding: 0;
     height: 100vh;
-    font-family: "Permanent Marker";
+    font-family: "Sweaty Belvin";
     color: #ffffff;
     background-color: #1156FC;
     user-select: none;
@@ -115,6 +115,12 @@ a {
 
 .spacer {
     flex: 1 1 auto;
+}
+
+.textfit {
+    position: fixed;
+    top: -1000px;
+    left: -1000px;
 }
 
 .character {
@@ -251,9 +257,9 @@ a {
 }
 
 .choosecharacter--modal__title {
-    font-size: 32px;
+    font-size: 48px;
     text-align: center;
-    margin: 16px;
+    margin: 16px 0 0 0;
 }
 
 .choosecharacter--modal__container {
@@ -315,7 +321,7 @@ a {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 48px;
+    font-size: 68px;
     text-shadow: 0 0 10px rgba(0, 0, 0, .5);
     background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
     animation: colorTransition 5s alternate infinite;
@@ -327,7 +333,7 @@ a {
 }
 
 .lobby--toomanyplayers {
-    font-size: 24px;
+    font-size: 32px;
 }
 
 .lobby--categories {
@@ -564,13 +570,14 @@ a {
     padding: 16px;
 
     font-family: "Futura PT";
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 600;
 }
 
 .scene--characterguessed__name {
-    font-family: "Permanent Marker";
+    font-family: "Sweaty Belvin";
     font-weight: 500;
+    font-size: 38px;
 }
 
 .scene--characterguessed__content button {
