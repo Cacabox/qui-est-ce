@@ -104,13 +104,14 @@
     padding: 16px;
 
     font-family: "Futura PT";
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 600;
 }
 
 .scene--characterguessed__name {
-    font-family: "Permanent Marker";
+    font-family: "Sweaty Belvin";
     font-weight: 500;
+    font-size: 38px;
 }
 
 .scene--characterguessed__content button {

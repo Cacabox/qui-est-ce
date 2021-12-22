@@ -49,8 +49,8 @@
 }
 
 @font-face {
-    font-family: "Permanent Marker";
-    src: url(../assets/PermanentMarker-Regular.ttf) format("truetype");
+    font-family: "Sweaty Belvin";
+    src: url(../assets/SweatyBelvin.ttf) format("truetype");
     font-weight: 500;
     font-style: normal;
 }
@@ -61,7 +61,7 @@ body,
     margin: 0;
     padding: 0;
     height: 100vh;
-    font-family: "Permanent Marker";
+    font-family: "Sweaty Belvin";
     color: #ffffff;
     background-color: #1156FC;
     user-select: none;

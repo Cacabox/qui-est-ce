@@ -2,6 +2,7 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { ComputedBounds } from "@components/Plateau";
+import { Textfit } from "@components/Textfit";
 
 import "./style.css";
 
@@ -92,7 +93,7 @@ export const Character = ({
                         <img src="assets/case-front.webp" />
                     </div>
 
-                    <div className="character--box__name">{ name }</div>
+                    <Textfit className="character--box__name" text={ name } font="Sweaty Belvin" />
                 </motion.div>
             </motion.div>
         </AnimatePresence>
