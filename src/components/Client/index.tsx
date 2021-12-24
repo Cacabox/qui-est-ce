@@ -40,7 +40,6 @@ export const Client = () => {
                 });
             });
 
-                    console.log(players);
             setPlayers(players);
 
             presence.subscribe("enter", (client) => {
@@ -53,7 +52,6 @@ export const Client = () => {
                         }
                     ];
 
-                    console.log(players);
                     setPlayers(players);
                 }
             });
@@ -61,7 +59,6 @@ export const Client = () => {
             presence.subscribe("leave", (client) => {
                 players = players.filter(player => player.name !== client.clientId);
 
-                    console.log(players);
                 setPlayers(players);
             });
 

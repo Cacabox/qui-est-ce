@@ -13,7 +13,7 @@ interface getPersonnagesQuery {
             id         : string,
             nom        : string,
             categories : { nom: string }[],
-            image      : { url: string } | null,
+            image      : { url: string, offsetX: number | null } | null,
         }]
     }
 }
@@ -26,14 +26,15 @@ export const getCharacters = selector<CharacterProps[]>({
         const { data: { personages } }: getPersonnagesQuery = await client.query({
             query: gql`
                 query getPersonnages {
-                    personages {
+                    personages(first: 1000) {
                         id
                         nom
                         categories {
                             nom
                         }
                         image {
-                            url
+                            url(transformation: {image: {resize: {height: 200}}})
+                            offsetX
                         }
                     }
                 }
@@ -49,7 +50,7 @@ export const getCharacters = selector<CharacterProps[]>({
                 id         : personage.id,
                 name       : personage.nom,
                 categories : personage.categories.map(_ => _.nom),
-                image      : personage.image.url,
+                image      : personage.image,
             }
         }).filter(_ => _ !== undefined);
 

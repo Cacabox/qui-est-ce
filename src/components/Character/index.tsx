@@ -9,7 +9,7 @@ import "./style.css";
 export interface CharacterProps {
     id         : string,
     name       : string,
-    image      : string,
+    image      : { url: string, offsetX: number | null },
     categories : string[],
 }
 
@@ -31,17 +31,25 @@ export const Character = ({
     hide         ? : boolean,
     onClick      ? : (character: CharacterProps, hidden ?: boolean) => void,
 }) => {
-    const { name } = character;
+    const { name, image: { offsetX } } = character;
 
     const className = ["character--box"];
 
-    let style: React.CSSProperties | undefined;
+    let characterStyle: React.CSSProperties | undefined;
 
     if (position) {
-        style = {
+        characterStyle = {
             ...position,
             position: "absolute",
         };
+    }
+
+    const characterImageStyle: React.CSSProperties = {
+        backgroundImage: `url(${ character.image.url })`,
+    }
+
+    if (offsetX !== null) {
+        characterImageStyle.backgroundPosition = `${ offsetX * 100 }% center`;
     }
 
     const parentVariants = {
@@ -61,12 +69,11 @@ export const Character = ({
         className.push("character--box__hiden")
     }
 
-
     return (
         <AnimatePresence>
             <motion.div
                 className="character"
-                style={ style }
+                style={ characterStyle }
                 transition={{ delay: hide ? 0.3 : 0 }}
                 initial="visible"
                 animate={ hide ? "hidden" : "visible" }
@@ -87,7 +94,7 @@ export const Character = ({
                         <img src="assets/case-background.webp" />
                     </div>
 
-                    <div className="character--box__image" style={{ backgroundImage: `url(${ character.image })` }} />
+                    <div className="character--box__image" style={ characterImageStyle } />
 
                     <div className="character--box__front">
                         <img src="assets/case-front.webp" />
