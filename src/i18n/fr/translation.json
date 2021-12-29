@@ -19,6 +19,7 @@
         "lobby": {
             "link": "Copier le lien de la room",
             "link-clicked": "Copié",
+            "new-room": "Nouvelle room",
             "room": "Room :",
             "start": "Commencer une partie",
             "too-many-players": "Il y a plus de 2 joueurs dans la room",

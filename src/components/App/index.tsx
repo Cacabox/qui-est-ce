@@ -1,5 +1,5 @@
-import React, { Suspense } from "react";
-import { useRecoilValue } from "recoil";
+import React, { Suspense, useEffect } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 
 import { Client } from "@components/Client";
@@ -11,6 +11,8 @@ import { Scene } from "@components/Scene";
 
 import { getFirestorePath } from "@helpers/client";
 import { getRoundState } from "@helpers/round";
+import { getRoomId } from "@helpers/room";
+import { getSettings } from "@helpers/settings";
 import { getTwitchToken } from "@helpers/token";
 
 import "@i18n/config";
@@ -18,9 +20,19 @@ import "@i18n/config";
 import "./style.css";
 
 export const App = () => {
-    const token = useRecoilValue(getTwitchToken);
+    const roomId = useRecoilValue(getRoomId);
+    const token  = useRecoilValue(getTwitchToken);
+
+    const [settings, setSettings] = useRecoilState(getSettings);
 
     const { t } = useTranslation();
+
+    useEffect(() => {
+        setSettings({
+            ...settings,
+            lastRoom: roomId,
+        });
+    }, [roomId]);
 
     if (token === "") {
         return <Login />;

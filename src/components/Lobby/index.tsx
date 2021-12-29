@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
 import { Categories } from "@components/Categories";
@@ -10,6 +10,8 @@ import { getFirestorePath } from "@helpers/client";
 import { getMe, getOpponent, getPlayersOnline } from "@helpers/players";
 import { getRoomId } from "@helpers/room";
 import { getRoundState } from "@helpers/round";
+import { getSettings } from "@helpers/settings";
+import { getHashParams } from "@helpers/utils";
 
 import "./style.css";
 
@@ -30,6 +32,11 @@ export const Lobby = () => {
     const setOpponentCharacters      = useSetRecoilState(getCharactersForUser(path.opponent));
     const setOpponentCharacterSecret = useSetRecoilState(getCharacterSecretForUser(path.opponent));
     const setRoundState              = useSetRecoilState(getRoundState(path.room));
+    const setHashParams              = useSetRecoilState(getHashParams);
+
+    const [settings, setSettings] = useRecoilState(getSettings);
+
+    const refreshRoomId = useRecoilRefresher_UNSTABLE(getRoomId);
 
     const { t } = useTranslation();
 
@@ -43,6 +50,17 @@ export const Lobby = () => {
         const tmp = roomId.split("");
 
         return tmp.map((char, index) => index < tmp.length - 3 ? "⁕" : char);
+    }
+
+    const newRoom = () => {
+        setSettings({
+            ...settings,
+            lastRoom: undefined,
+        });
+
+        setHashParams(new Map());
+
+        refreshRoomId();
     }
 
     const startRound = async() => {
@@ -81,7 +99,13 @@ export const Lobby = () => {
     if (playersOnline.length < 2) {
         return (
             <div className="lobby">
-                <div className="lobby--room-id">{ t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span></div>
+                <div className="lobby--room-id">
+                    <div>
+                        { t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span>
+                    </div>
+
+                    <button className="lobby--new-room" onClick={ () => newRoom() }>{ t("lobby.new-room") }</button>
+                </div>
 
                 { t("lobby.waiting") }
 
@@ -92,6 +116,14 @@ export const Lobby = () => {
 
     return (
         <div className="lobby">
+            <div className="lobby--room-id">
+                <div>
+                    { t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span>
+                </div>
+
+                <button className="lobby--new-room" onClick={ () => newRoom() }>{ t("lobby.new-room") }</button>
+            </div>
+
             { me && opponent &&
                 <div className="lobby--versus">
                     <div className="lobby--versus__me">

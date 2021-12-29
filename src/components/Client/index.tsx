@@ -8,8 +8,9 @@ import { getRoomId } from "@helpers/room";
 import { getCurrentUser } from "@helpers/user";
 
 export const Client = () => {
+    const path = useRecoilValue(getFirestorePath);
+
     const roomId = useRecoilValue(getRoomId);
-    const path   = useRecoilValue(getFirestorePath);
     const user   = useRecoilValue(getCurrentUser);
 
     const setPlayers = useSetRecoilState(getPlayers);

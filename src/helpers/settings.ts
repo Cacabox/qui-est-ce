@@ -1,8 +1,8 @@
 import { atom, selector } from "recoil";
 
 interface Settings {
-    clientId : string,
-    locale   : string,
+    lastRoom ?: string,
+    locale    : string,
 }
 
 export const SETTINGSKEY = "settings";
@@ -10,9 +10,7 @@ export const SETTINGSKEY = "settings";
 const settingsAtom = atom({
     key: "settingsAtom",
     default: {
-        // @ts-expect-error
-        clientId : window.crypto.randomUUID(),
-        locale   : "fr"
+        locale: "fr",
     },
 });
 
