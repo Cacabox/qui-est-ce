@@ -3,13 +3,13 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
 import { getCharacterGuessForUser, getCharacterSecretForUser } from "@helpers/character";
-import { getFirestorePath } from "@helpers/client";
+import { getDatabasePath } from "@helpers/client";
 import { getRoundState } from "@helpers/round";
 
 import "./style.css";
 
 export const Finished = () => {
-    const path = useRecoilValue(getFirestorePath);
+    const path = useRecoilValue(getDatabasePath);
 
     const setRoundState              = useSetRecoilState(getRoundState(path.room));
     const setMyCharacterSecret       = useSetRecoilState(getCharacterSecretForUser(path.me));

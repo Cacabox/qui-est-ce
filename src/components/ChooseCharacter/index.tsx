@@ -6,12 +6,12 @@ import type { CharacterProps } from "@components/Character";
 import { Plateau } from "@components/Plateau";
 
 import { getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
-import { getFirestorePath } from "@helpers/client";
+import { getDatabasePath } from "@helpers/client";
 
 import "./style.css";
 
 export const ChooseCharacter = () => {
-    const path = useRecoilValue(getFirestorePath);
+    const path = useRecoilValue(getDatabasePath);
 
     const setCharacterSecret = useSetRecoilState(getCharacterSecretForUser(path.opponent));
 

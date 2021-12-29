@@ -1,8 +1,8 @@
 import { atom, atomFamily, DefaultValue, selectorFamily } from "recoil";
 import { gql } from "@apollo/client";
-import { deleteField, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { child, getDatabase, onValue, ref, remove, update } from "firebase/database";
 
-import { apolloClient, firestoreClient } from "@helpers/client";
+import { apolloClient } from "@helpers/client";
 
 import type { CharacterProps } from "@components/Character";
 
@@ -74,16 +74,22 @@ const charactersForUserAtom = atomFamily<string[], string | undefined>({
                 return;
             }
 
-            const userDoc = doc(firestoreClient, path);
+            const db = getDatabase();
+
+            const userDoc = ref(db, path);
 
             onSet((newValue) => {
-                setDoc(userDoc, {
-                    characters: newValue,
-                }, { merge: true });
+                if (newValue == undefined) {
+                    remove(child(userDoc, "characters"));
+                } else {
+                    update(userDoc, {
+                        characters: newValue,
+                    });
+                }
             });
 
-            const unsubscribe = onSnapshot(userDoc, (doc) => {
-                const data = doc.data() as { characters: string[] };
+            const unsubscribe = onValue(userDoc, (doc) => {
+                const data = doc.val() as { characters: string[] };
 
                 if(data?.characters) {
                     setSelf(data.characters);
@@ -131,16 +137,22 @@ const characterSecretForUserAtom = atomFamily<string | undefined, string | undef
                 return;
             }
 
-            const userDoc = doc(firestoreClient, path);
+            const db = getDatabase();
+
+            const userDoc = ref(db, path);
 
             onSet((newValue) => {
-                setDoc(userDoc, {
-                    characterSecret: newValue ? newValue : deleteField(),
-                }, { merge: true });
+                if (newValue == undefined) {
+                    remove(child(userDoc, "characterSecret"));
+                } else {
+                    update(userDoc, {
+                        characterSecret: newValue,
+                    });
+                }
             });
 
-            const unsubscribe = onSnapshot(userDoc, (doc) => {
-                const data = doc.data();
+            const unsubscribe = onValue(userDoc, (doc) => {
+                const data = doc.val();
 
                 if(data?.characterSecret) {
                     setSelf(data.characterSecret);
@@ -185,18 +197,24 @@ const characterGuessForUserAtom = atomFamily<string | undefined, string | undefi
                 return;
             }
 
-            const userDoc = doc(firestoreClient, path);
+            const db = getDatabase();
+
+            const userDoc = ref(db, path);
 
             onSet((newValue) => {
-                setDoc(userDoc, {
-                    characterGuess: newValue ? newValue : deleteField(),
-                }, { merge: true });
+                if (newValue == undefined) {
+                    remove(child(userDoc, "characterGuess"));
+                } else {
+                    update(userDoc, {
+                        characterGuess: newValue,
+                    });
+                }
             });
 
-            const unsubscribe = onSnapshot(userDoc, (doc) => {
-                const data = doc.data();
+            const unsubscribe = onValue(userDoc, (doc) => {
+                const data = doc.val();
 
-                if(data?.characterGuess) {
+                if (data?.characterGuess) {
                     setSelf(data.characterGuess);
                 } else {
                     setSelf(undefined);

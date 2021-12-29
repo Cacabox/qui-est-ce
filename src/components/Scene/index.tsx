@@ -8,14 +8,14 @@ import { ChooseCharacter } from "@components/ChooseCharacter";
 import { Plateau } from "@components/Plateau";
 
 import { getCharacterGuessForUser, getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
-import { getFirestorePath } from "@helpers/client";
+import { getDatabasePath } from "@helpers/client";
 import { getOpponent } from "@helpers/players";
 import { getRoundState } from "@helpers/round";
 
 import "./style.css";
 
 export const Scene = () => {
-    const path = useRecoilValue(getFirestorePath);
+    const path = useRecoilValue(getDatabasePath);
 
     const myCharacters     = useRecoilValue(getCharactersForUser(path.me));
     const characterSecret  = useRecoilValue(getCharacterSecretForUser(path.opponent));

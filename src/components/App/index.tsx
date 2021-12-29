@@ -9,7 +9,7 @@ import { Lobby } from "@components/Lobby";
 import { Login } from "@components/Login";
 import { Scene } from "@components/Scene";
 
-import { getFirestorePath } from "@helpers/client";
+import { getDatabasePath } from "@helpers/client";
 import { getRoundState } from "@helpers/round";
 import { getRoomId } from "@helpers/room";
 import { getSettings } from "@helpers/settings";
@@ -48,7 +48,7 @@ export const App = () => {
 }
 
 const Game = () => {
-    const path = useRecoilValue(getFirestorePath);
+    const path = useRecoilValue(getDatabasePath);
 
     const roundState = useRecoilValue(getRoundState(path.room));
 

@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { getDatabase, onValue, ref, update } from "firebase/database";
 
-import { firestoreClient, getFirestorePath } from "@helpers/client";
-import { getPlayers, Player } from "@helpers/players";
+import { getDatabasePath } from "@helpers/client";
+import { getPlayers } from "@helpers/players";
 import { getRoomId } from "@helpers/room";
 import { getCurrentUser } from "@helpers/user";
 
 export const Client = () => {
-    const path = useRecoilValue(getFirestorePath);
+    const path = useRecoilValue(getDatabasePath);
 
     const roomId = useRecoilValue(getRoomId);
     const user   = useRecoilValue(getCurrentUser);
@@ -16,21 +16,24 @@ export const Client = () => {
     const setPlayers = useSetRecoilState(getPlayers);
 
     useEffect(() => {
-        const userDoc = doc(firestoreClient, path.me);
+        const db = getDatabase();
+        const userDoc = ref(db, path.me);
 
-        setDoc(userDoc, {
+        update(userDoc, {
             id       : user.uid,
             name     : user.displayName,
             photoURL : user.photoURL,
             online   : true,
-        }, { merge: true });
+        });
 
-        const usersCollection = collection(firestoreClient, path.users);
+        const usersCollection = ref(db, path.users);
 
-        const unsubscribe = onSnapshot(usersCollection, (collection) => {
-            const docs = collection.docs;
+        const unsubscribe = onValue(usersCollection, (collection) => {
+            const val = collection.val();
 
-            const players: Player[] = docs.map((doc) => doc.data() as Player);
+            const keys = Object.keys(val);
+
+            const players = keys.map((key) => val[key]);
 
             setPlayers(players);
         });
@@ -40,11 +43,12 @@ export const Client = () => {
 
     useEffect(() => {
         const listener = () => {
-            const userDoc = doc(firestoreClient, path.me);
+            const db = getDatabase();
+            const userDoc = ref(db, path.me);
 
-            setDoc(userDoc, {
+            update(userDoc, {
                 online: false,
-            }, { merge: true });
+            });
         }
 
         window.addEventListener("beforeunload", listener, false);

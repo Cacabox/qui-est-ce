@@ -1,8 +1,7 @@
 import { atomFamily, selector } from "recoil";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { getDatabase, onValue, ref, update } from "firebase/database";
 
 import { getAllCharacters } from "@helpers/character";
-import { firestoreClient } from "@helpers/client";
 
 interface Categorie {
     name  : string,
@@ -35,16 +34,18 @@ export const getCategoriesBanned = atomFamily<string[], string>({
     default          : [],
     effects_UNSTABLE : path => [
         ({ setSelf, onSet }) => {
-            const roomDoc = doc(firestoreClient, path);
+            const db = getDatabase();
+
+            const roomDoc = ref(db, path);
 
             onSet((newValue) => {
-                setDoc(roomDoc, {
+                update(roomDoc, {
                     categoriesBanned: newValue,
-                }, { merge: true });
+                });
             });
 
-            const unsubscribe = onSnapshot(roomDoc, (doc) => {
-                const data = doc.data();
+            const unsubscribe = onValue(roomDoc, (doc) => {
+                const data = doc.val();
 
                 if(data?.categoriesBanned) {
                     setSelf(data.categoriesBanned);

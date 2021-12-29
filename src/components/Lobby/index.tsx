@@ -6,7 +6,7 @@ import { Categories } from "@components/Categories";
 
 import { getCategoriesBanned } from "@helpers/categories";
 import { getAllCharacters, getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
-import { getFirestorePath } from "@helpers/client";
+import { getDatabasePath } from "@helpers/client";
 import { getMe, getOpponent, getPlayersOnline } from "@helpers/players";
 import { getRoomId } from "@helpers/room";
 import { getRoundState } from "@helpers/round";
@@ -16,7 +16,7 @@ import { getHashParams } from "@helpers/utils";
 import "./style.css";
 
 export const Lobby = () => {
-    const path = useRecoilValue(getFirestorePath);
+    const path = useRecoilValue(getDatabasePath);
 
     const categoriesBanned = useRecoilValue(getCategoriesBanned(path.room));
     const characters       = useRecoilValue(getAllCharacters);

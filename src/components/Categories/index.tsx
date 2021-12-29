@@ -4,13 +4,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 import { getCategories, getCategoriesBanned } from "@helpers/categories";
-import { getFirestorePath } from "@helpers/client";
+import { getDatabasePath } from "@helpers/client";
 
 import "./style.css";
 
 export const Categories = () => {
     const categories = useRecoilValue(getCategories);
-    const path       = useRecoilValue(getFirestorePath);
+    const path       = useRecoilValue(getDatabasePath);
 
     const [categoriesBanned, setCategoriesBanned] = useRecoilState(getCategoriesBanned(path.room));
 

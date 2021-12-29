@@ -1,7 +1,5 @@
 import { atomFamily } from "recoil";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
-
-import { firestoreClient } from "@helpers/client";
+import { getDatabase, onValue, ref, update } from "firebase/database";
 
 export type RoundState = "not-started" | "running" | "finished";
 
@@ -10,16 +8,18 @@ export const getRoundState = atomFamily<RoundState, string>({
     default          : "not-started",
     effects_UNSTABLE : path => [
         ({ setSelf, onSet }) => {
-            const roomDoc = doc(firestoreClient, path);
+            const db = getDatabase();
+
+            const roomDoc = ref(db, path);
 
             onSet((newValue) => {
-                setDoc(roomDoc, {
+                update(roomDoc, {
                     roundState: newValue,
-                }, { merge: true });
+                });
             });
 
-            const unsubscribe = onSnapshot(roomDoc, (doc) => {
-                const data = doc.data();
+            const unsubscribe = onValue(roomDoc, (doc) => {
+                const data = doc.val();
 
                 if(data?.roundState) {
                     setSelf(data.roundState);
