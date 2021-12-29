@@ -23,7 +23,7 @@ export const getHashParams = atom({
 
                 setSelf(hashMap);
 
-                history.pushState("", document.title, window.location.origin);
+                history.pushState("", document.title, window.location.origin + window.location.pathname);
             }
         }
 
