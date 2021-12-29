@@ -1,0 +1,35 @@
+.login {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
+    animation: colorTransition 5s alternate infinite;
+}
+
+.login--container {
+    background-color: #000000;
+    border-radius: 8px;
+    padding: 16px 24px;
+}
+
+.login--container__title {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    font-size: 32px;
+    margin: 16px 0 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login--container__logo {
+    width: 40px;
+    margin-right: 16px;
+}

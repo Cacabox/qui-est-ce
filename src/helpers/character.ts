@@ -1,7 +1,8 @@
-import { selector } from "recoil";
+import { atom, atomFamily, DefaultValue, selectorFamily } from "recoil";
 import { gql } from "@apollo/client";
+import { deleteField, doc, onSnapshot, setDoc } from "firebase/firestore";
 
-import { getApolloClient } from "@helpers/client";
+import { apolloClient, firestoreClient } from "@helpers/client";
 
 import type { CharacterProps } from "@components/Character";
 
@@ -18,55 +19,213 @@ interface getPersonnagesQuery {
     }
 }
 
-export const getCharacters = selector<CharacterProps[]>({
-    key: "getCharacters",
-    get: async({ get }) => {
-        const client = get(getApolloClient);
+export const getAllCharacters = atom<CharacterProps[]>({
+    key              : "getAllCharacters",
+    default          : [],
+    effects_UNSTABLE : [
+        ({ setSelf }) => {
+            (async() => {
+                const { data: { personages } }: getPersonnagesQuery = await apolloClient.query({
+                    query: gql`
+                        query getPersonnages {
+                            personages(first: 1000) {
+                                id
+                                nom
+                                categories {
+                                    nom
+                                }
+                                image {
+                                    url(transformation: {image: {resize: {height: 200}}})
+                                    offsetX
+                                }
+                            }
+                        }
+                    `
+                });
 
-        const { data: { personages } }: getPersonnagesQuery = await client.query({
-            query: gql`
-                query getPersonnages {
-                    personages(first: 1000) {
-                        id
-                        nom
-                        categories {
-                            nom
-                        }
-                        image {
-                            url(transformation: {image: {resize: {height: 200}}})
-                            offsetX
-                        }
+                const characters = personages.map((personage): CharacterProps | undefined => {
+                    if (!personage.image) {
+                        return;
                     }
-                }
-            `
-        });
 
-        const characters = personages.map((personage): CharacterProps | undefined => {
-            if (!personage.image) {
+                    const categories = personage.categories.map(_ => _.nom);
+
+                    return {
+                        id         : personage.id,
+                        name       : personage.nom,
+                        categories : categories.length > 0 ? categories : ["Autre"],
+                        image      : personage.image,
+                    }
+                }).filter(_ => _ !== undefined);
+
+                // @ts-expect-error
+                setSelf(characters)
+            })();
+        }
+    ]
+});
+
+const charactersForUserAtom = atomFamily<string[], string | undefined>({
+    key              : "charactersForUserAtom",
+    default          : [],
+    effects_UNSTABLE : path => [
+        ({ setSelf, onSet }) => {
+            if (!path) {
                 return;
             }
 
-            return {
-                id         : personage.id,
-                name       : personage.nom,
-                categories : personage.categories.map(_ => _.nom),
-                image      : personage.image,
-            }
-        }).filter(_ => _ !== undefined);
+            const userDoc = doc(firestoreClient, path);
 
-        return shuffle([...characters]);
+            onSet((newValue) => {
+                setDoc(userDoc, {
+                    characters: newValue,
+                }, { merge: true });
+            });
+
+            const unsubscribe = onSnapshot(userDoc, (doc) => {
+                const data = doc.data() as { characters: string[] };
+
+                if(data?.characters) {
+                    setSelf(data.characters);
+                } else {
+                    setSelf([]);
+                }
+            });
+
+            return () => unsubscribe();
+        },
+    ],
+});
+
+export const getCharactersForUser = selectorFamily<CharacterProps[], string | undefined>({
+    key: "getCharactersForUser",
+    get: path => ({ get }) => {
+        if (!path) {
+            return [];
+        }
+
+        const characters = get(getAllCharacters);
+
+        const charactersId = get(charactersForUserAtom(path));
+
+        // @ts-expect-error
+        const result: CharacterProps[] = charactersId.map(id => characters.find(character => character.id === id)).filter(_ => _ != undefined);
+
+        return result;
+    },
+    set: path => ({ set }, newValue) => {
+        if (!path || newValue instanceof DefaultValue) {
+            return;
+        }
+
+        set(charactersForUserAtom(path), newValue.map(_ => _.id));
+    }
+});
+
+const characterSecretForUserAtom = atomFamily<string | undefined, string | undefined>({
+    key              : "characterSecretForUserAtom",
+    default          : undefined,
+    effects_UNSTABLE : path => [
+        ({ setSelf, onSet }) => {
+            if (!path) {
+                return;
+            }
+
+            const userDoc = doc(firestoreClient, path);
+
+            onSet((newValue) => {
+                setDoc(userDoc, {
+                    characterSecret: newValue ? newValue : deleteField(),
+                }, { merge: true });
+            });
+
+            const unsubscribe = onSnapshot(userDoc, (doc) => {
+                const data = doc.data();
+
+                if(data?.characterSecret) {
+                    setSelf(data.characterSecret);
+                } else {
+                    setSelf(undefined);
+                }
+            });
+
+            return () => unsubscribe();
+        },
+    ],
+});
+
+export const getCharacterSecretForUser = selectorFamily<CharacterProps | undefined, string | undefined>({
+    key: "getCharacterSecretForUser",
+    get: path => ({ get }) => {
+        if (!path) {
+            return;
+        }
+
+        const characters = get(getAllCharacters);
+
+        const charactersId = get(characterSecretForUserAtom(path));
+
+        return characters.find(character => character.id === charactersId);
+    },
+    set: path => ({ set }, newValue) => {
+        if (!path || newValue instanceof DefaultValue) {
+            return;
+        }
+
+        set(characterSecretForUserAtom(path), newValue?.id);
     },
 });
 
-// From : https://github.com/d3/d3-array/blob/main/src/shuffle.js
-function shuffle(array: any[], i0 = 0, i1 = array.length) {
-    let m = i1 - (i0 = +i0);
+const characterGuessForUserAtom = atomFamily<string | undefined, string | undefined>({
+    key              : "characterGuessForUserAtom",
+    default          : undefined,
+    effects_UNSTABLE : path => [
+        ({ setSelf, onSet }) => {
+            if (!path) {
+                return;
+            }
 
-    while (m) {
-        const i = Math.random() * m-- | 0, t = array[m + i0];
-        array[m + i0] = array[i + i0];
-        array[i + i0] = t;
-    }
+            const userDoc = doc(firestoreClient, path);
 
-    return array;
-}
+            onSet((newValue) => {
+                setDoc(userDoc, {
+                    characterGuess: newValue ? newValue : deleteField(),
+                }, { merge: true });
+            });
+
+            const unsubscribe = onSnapshot(userDoc, (doc) => {
+                const data = doc.data();
+
+                if(data?.characterGuess) {
+                    setSelf(data.characterGuess);
+                } else {
+                    setSelf(undefined);
+                }
+            });
+
+            return () => unsubscribe();
+        },
+    ],
+});
+
+export const getCharacterGuessForUser = selectorFamily<CharacterProps | undefined, string | undefined>({
+    key: "getCharacterGuessForUser",
+    get: path => ({ get }) => {
+        if (!path) {
+            return;
+        }
+
+        const characters = get(getAllCharacters);
+
+        const charactersId = get(characterGuessForUserAtom(path));
+
+        return characters.find(character => character.id === charactersId);
+    },
+    set: path => ({ set }, newValue) => {
+        if (!path || newValue instanceof DefaultValue) {
+            return;
+        }
+
+        set(characterGuessForUserAtom(path), newValue?.id);
+    },
+});

@@ -1,23 +1,40 @@
 {
     "translation": {
+        "app": {
+            "loading": "Chargement..."
+        },
+        "categories": {
+            "choose-categories": "Catégories"
+        },
         "choosecharacter": {
             "title": "Choisis la carte pour ton adversaire"
+        },
+        "error-boundary": {
+            "error": "Oups, ça marche plus :(",
+            "reset": "Réinitialiser"
         },
         "finished": {
             "start-again": "Nouvelle game ?"
         },
         "lobby": {
-            "choose-categories": "Choisir les catégories",
             "link": "Copier le lien de la room",
             "link-clicked": "Copié",
+            "room": "Room :",
             "start": "Commencer une partie",
             "too-many-players": "Il y a plus de 2 joueurs dans la room",
             "waiting": "En attente de l'adversaire"
+        },
+        "login": {
+            "title": "Se connecter avec Twitch",
+            "action": "Se connecter"
         },
         "plateau": {
             "guess": "Est-ce que c'est",
             "no": "Non",
             "yes": "Oui"
+        },
+        "scene": {
+            "must-guess": "doit deviner"
         }
     }
 }

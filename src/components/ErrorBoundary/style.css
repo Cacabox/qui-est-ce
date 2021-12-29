@@ -1,0 +1,68 @@
+.error {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 64px;
+
+    animation: colorErrorTransition 5s alternate infinite;
+}
+
+@keyframes colorErrorTransition {
+    0% { background: linear-gradient(200deg, #ff0000 5%, hsl(296, 100%, 50%) 100%); }
+    2% { background: linear-gradient(200deg, #ff0000 5%, hsl(298, 100%, 50%) 100%); }
+    4% { background: linear-gradient(200deg, #ff0000 5%, hsl(301, 100%, 50%) 100%); }
+    6% { background: linear-gradient(200deg, #ff0000 5%, hsl(303, 100%, 50%) 100%); }
+    8% { background: linear-gradient(200deg, #ff0000 5%, hsl(306, 100%, 50%) 100%); }
+    10% { background: linear-gradient(200deg, #ff0000 5%, hsl(308, 100%, 50%) 100%); }
+    12% { background: linear-gradient(200deg, #ff0000 5%, hsl(311, 100%, 50%) 100%); }
+    14% { background: linear-gradient(200deg, #ff0000 5%, hsl(313, 100%, 50%) 100%); }
+    16% { background: linear-gradient(200deg, #ff0000 5%, hsl(315, 100%, 50%) 100%); }
+    18% { background: linear-gradient(200deg, #ff0000 5%, hsl(318, 100%, 50%) 100%); }
+    20% { background: linear-gradient(200deg, #ff0000 5%, hsl(320, 100%, 50%) 100%); }
+    22% { background: linear-gradient(200deg, #ff0000 5%, hsl(323, 100%, 50%) 100%); }
+    24% { background: linear-gradient(200deg, #ff0000 5%, hsl(325, 100%, 50%) 100%); }
+    26% { background: linear-gradient(200deg, #ff0000 5%, hsl(328, 100%, 50%) 100%); }
+    28% { background: linear-gradient(200deg, #ff0000 5%, hsl(330, 100%, 50%) 100%); }
+    30% { background: linear-gradient(200deg, #ff0000 5%, hsl(332, 100%, 50%) 100%); }
+    32% { background: linear-gradient(200deg, #ff0000 5%, hsl(335, 100%, 50%) 100%); }
+    34% { background: linear-gradient(200deg, #ff0000 5%, hsl(337, 100%, 50%) 100%); }
+    36% { background: linear-gradient(200deg, #ff0000 5%, hsl(340, 100%, 50%) 100%); }
+    38% { background: linear-gradient(200deg, #ff0000 5%, hsl(342, 100%, 50%) 100%); }
+    40% { background: linear-gradient(200deg, #ff0000 5%, hsl(345, 100%, 50%) 100%); }
+    42% { background: linear-gradient(200deg, #ff0000 5%, hsl(347, 100%, 50%) 100%); }
+    44% { background: linear-gradient(200deg, #ff0000 5%, hsl(350, 100%, 50%) 100%); }
+    46% { background: linear-gradient(200deg, #ff0000 5%, hsl(352, 100%, 50%) 100%); }
+    48% { background: linear-gradient(200deg, #ff0000 5%, hsl(354, 100%, 50%) 100%); }
+    50% { background: linear-gradient(200deg, #ff0000 5%, hsl(357, 100%, 50%) 100%); }
+    52% { background: linear-gradient(200deg, #ff0000 5%, hsl(359, 100%, 50%) 100%); }
+    54% { background: linear-gradient(200deg, #ff0000 5%, hsl(2, 100%, 50%) 100%); }
+    56% { background: linear-gradient(200deg, #ff0000 5%, hsl(4, 100%, 50%) 100%); }
+    58% { background: linear-gradient(200deg, #ff0000 5%, hsl(7, 100%, 50%) 100%); }
+    60% { background: linear-gradient(200deg, #ff0000 5%, hsl(9, 100%, 50%) 100%); }
+    62% { background: linear-gradient(200deg, #ff0000 5%, hsl(12, 100%, 50%) 100%); }
+    64% { background: linear-gradient(200deg, #ff0000 5%, hsl(14, 100%, 50%) 100%); }
+    68% { background: linear-gradient(200deg, #ff0000 5%, hsl(16, 100%, 50%) 100%); }
+    70% { background: linear-gradient(200deg, #ff0000 5%, hsl(19, 100%, 50%) 100%); }
+    72% { background: linear-gradient(200deg, #ff0000 5%, hsl(21, 100%, 50%) 100%); }
+    74% { background: linear-gradient(200deg, #ff0000 5%, hsl(24, 100%, 50%) 100%); }
+    76% { background: linear-gradient(200deg, #ff0000 5%, hsl(26, 100%, 50%) 100%); }
+    78% { background: linear-gradient(200deg, #ff0000 5%, hsl(29, 100%, 50%) 100%); }
+    80% { background: linear-gradient(200deg, #ff0000 5%, hsl(31, 100%, 50%) 100%); }
+    82% { background: linear-gradient(200deg, #ff0000 5%, hsl(33, 100%, 50%) 100%); }
+    84% { background: linear-gradient(200deg, #ff0000 5%, hsl(36, 100%, 50%) 100%); }
+    86% { background: linear-gradient(200deg, #ff0000 5%, hsl(38, 100%, 50%) 100%); }
+    88% { background: linear-gradient(200deg, #ff0000 5%, hsl(41, 100%, 50%) 100%); }
+    90% { background: linear-gradient(200deg, #ff0000 5%, hsl(43, 100%, 50%) 100%); }
+    92% { background: linear-gradient(200deg, #ff0000 5%, hsl(46, 100%, 50%) 100%); }
+    94% { background: linear-gradient(200deg, #ff0000 5%, hsl(48, 100%, 50%) 100%); }
+    96% { background: linear-gradient(200deg, #ff0000 5%, hsl(51, 100%, 50%) 100%); }
+    100% { background: linear-gradient(200deg, #ff0000 5%, hsl(53, 100%, 50%) 100%); }
+}

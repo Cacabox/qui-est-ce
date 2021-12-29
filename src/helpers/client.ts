@@ -1,66 +1,49 @@
 import { selector } from "recoil";
-import Ably from "ably/promises";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { initializeApp } from "firebase/app";
+import { getFirestore as getFirestoreImpl } from "firebase/firestore";
 
-import { getSettings } from "@helpers/settings";
+import { getRoomId } from "@helpers/room";
+import { getOpponent } from "@helpers/players";
+import { getCurrentUser } from "@helpers/user";
 
-const getAblyClient = selector({
-    key: "getAblyClient",
-    get: ({ get }) => {
-        const { clientId } = get(getSettings);
-
-        return new Ably.Realtime.Promise({
-            key: "eUPftg.U_9ung:j71TqC9cL_j3Z9zvhIpvXnQ98-PKooUYJ8lYO5syYzI",
-            clientId,
-        });
-    },
-    dangerouslyAllowMutability: true,
+export const apolloClient = new ApolloClient({
+    uri   : "https://api-eu-central-1.graphcms.com/v2/ckx8muqxk0nxy01z0amvy5bqo/master",
+    cache : new InMemoryCache()
 });
 
-export const getApolloClient = selector({
-    key: "getApolloClient",
-    get: () => {
-        return new ApolloClient({
-            uri   : "https://api-eu-central-1.graphcms.com/v2/ckx8muqxk0nxy01z0amvy5bqo/master",
-            cache : new InMemoryCache()
-        });
-    },
-    dangerouslyAllowMutability: true,
+export const firebaseClient = initializeApp({
+    apiKey    : "AIzaSyA8_Ap7wETmcIjgZncUn-3mPgmSGpGMiFQ",
+    appId     : "1:465604282379:web:d723f1bd0ceba84b23df0e",
+    projectId : "qui-est-ce-3621d",
 });
 
-export const getChannelId = selector<string>({
-    key: "getChannelId",
-    get: () => {
-        const channel = getQueryParams()?.channel || crypto.getRandomValues(new Uint32Array(1))[0].toString();
+export const firestoreClient = getFirestoreImpl(firebaseClient);
 
-        return channel;
-    },
-});
-
-export const getChannel = selector({
-    key: "getChannel",
-    get: ({ get }) => {
-        const channelId = get(getChannelId);
-        const client    = get(getAblyClient);
-
-        return client.channels.get("[?rewind=100]qui-est-ce-" + channelId);
-    },
-    dangerouslyAllowMutability: true,
-});
-
-const getQueryParams = (): { channel: string } | undefined => {
-    if (!window.location.search.length) {
-        return;
-    }
-
-    const search = window.location.search.slice(1);
-
-    return search.split("&").reduce((previous: any, current) => {
-        const key = current.split("=")[0];
-        const value = current.split("=")[1];
-
-        previous[key] = value;
-
-        return previous;
-    }, {});
+export interface Path {
+    me        : string,
+    opponent ?: string,
+    room      : string,
+    users     : string,
 }
+
+export const getFirestorePath = selector<Path>({
+    key: "getFirestore",
+    get: ({ get }) => {
+        const roomId   = get(getRoomId);
+        const me       = get(getCurrentUser);
+        const opponent = get(getOpponent);
+
+        const paths: Path = {
+            room  : `rooms/${ roomId }`,
+            users : `rooms/${ roomId }/users`,
+            me    : `rooms/${ roomId }/users/${ me.uid }`,
+        }
+
+        if (opponent) {
+            paths.opponent = `rooms/${ roomId }/users/${ opponent.id }`;
+        }
+
+        return paths;
+    },
+});

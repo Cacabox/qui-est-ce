@@ -1,16 +1,39 @@
-export const CLIENTID = "gvmbg22kqruvfibmxm4dm5datn9yis";
+import { selectorFamily, SerializableParam } from "recoil";
 
-export const api = async (token: string, path: string) => {
-    const request = await fetch(`https://api.twitch.tv/helix/${ path }`, {
-        headers: {
-            "Authorization" : `Bearer ${ token }`,
-            "Client-Id"     : CLIENTID,
-        }
-    });
+import { getTwitchToken } from "@helpers/token";
 
-    if (request.status < 200 || request.status > 299) {
-        throw new Error();
-    }
+export const CLIENTID = "9c0mrfyuyvw3ylkw3qumrtueb50eu9";
 
-    return request.json();
+type TwitchApiParam = SerializableParam & {
+    path: string,
 }
+
+export interface TwitchApiUser {
+    data: {
+        id                : string,
+        display_name      : string,
+        profile_image_url : string,
+    }[],
+}
+
+export const twitchApi = selectorFamily<any, TwitchApiParam>({
+    key: "twitchApi",
+    get: (param) => async({ get }) => {
+        const token = get(getTwitchToken);
+
+        const { path } = param;
+
+        const request = await fetch(`https://api.twitch.tv/helix/${ path }`, {
+            headers: {
+                "Authorization" : `Bearer ${ token }`,
+                "Client-Id"     : CLIENTID,
+            }
+        });
+
+        if (request.status < 200 || request.status > 299) {
+            throw new Error();
+        }
+
+        return request.json();
+    }
+});

@@ -1,107 +1,55 @@
 import { useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 
-import type { CharacterProps } from "@components/Character";
-
-import { getChannel } from "@helpers/client";
-import { getPlayers, PlayerProps } from "@helpers/players";
-import { getSettings } from "@helpers/settings";
-import { getRoundCharactersOpponent, getRoundCharacterGuessed, RoundState, roundStateAtom } from "@helpers/round";
-
-export const enum ClientEvent {
-    characters = "characters",
-    guess      = "guess",
-    state      = "state",
-}
+import { firestoreClient, getFirestorePath } from "@helpers/client";
+import { getPlayers, Player } from "@helpers/players";
+import { getRoomId } from "@helpers/room";
+import { getCurrentUser } from "@helpers/user";
 
 export const Client = () => {
-    const channel  = useRecoilValue(getChannel);
-    const settings = useRecoilValue(getSettings)
+    const roomId = useRecoilValue(getRoomId);
+    const path   = useRecoilValue(getFirestorePath);
+    const user   = useRecoilValue(getCurrentUser);
 
     const setPlayers = useSetRecoilState(getPlayers);
 
-    const setRoundCharacterGuessed   = useSetRecoilState(getRoundCharacterGuessed);
-    const setRoundCharactersOpponent = useSetRecoilState(getRoundCharactersOpponent);
-    const setRoundState              = useSetRecoilState(roundStateAtom);
-
-    // Login | Logout
     useEffect(() => {
-        (async() => {
-            let players: PlayerProps[] = [];
+        const userDoc = doc(firestoreClient, path.me);
 
-            const presence = channel.presence;
+        setDoc(userDoc, {
+            id       : user.uid,
+            name     : user.displayName,
+            photoURL : user.photoURL,
+            online   : true,
+        }, { merge: true });
 
-            const clients = await presence.get();
+        const usersCollection = collection(firestoreClient, path.users);
 
-            clients.map((client) => {
-                players.push({
-                    name      : client.clientId,
-                    timestamp : client.timestamp,
-                });
-            });
+        const unsubscribe = onSnapshot(usersCollection, (collection) => {
+            const docs = collection.docs;
+
+            const players: Player[] = docs.map((doc) => doc.data() as Player);
 
             setPlayers(players);
+        });
 
-            presence.subscribe("enter", (client) => {
-                if (!players.find((player) => player.name === client.clientId)) {
-                    players = [
-                        ...players,
-                        {
-                            name      : client.clientId,
-                            timestamp : client.timestamp,
-                        }
-                    ];
+        return () => unsubscribe();
+    }, [roomId, user]);
 
-                    setPlayers(players);
-                }
-            });
-
-            presence.subscribe("leave", (client) => {
-                players = players.filter(player => player.name !== client.clientId);
-
-                setPlayers(players);
-            });
-
-            await presence.enter();
-        })();
-    }, [channel]);
-
-    // roundState
     useEffect(() => {
-        const listener = ({ data: roundState }: { data: RoundState }) => {
-            setRoundState(roundState);
+        const listener = () => {
+            const userDoc = doc(firestoreClient, path.me);
+
+            setDoc(userDoc, {
+                online: false,
+            }, { merge: true });
         }
 
-        channel.subscribe(ClientEvent.state, listener);
+        window.addEventListener("beforeunload", listener, false);
 
-        return () => channel.unsubscribe(ClientEvent.state, listener);
-    }, [channel]);
-
-    // roundCharacters
-    useEffect(() => {
-        const listener = ({ data, clientId }: { data: CharacterProps[], clientId: string }) => {
-            if (clientId !== settings.clientId) {
-                setRoundCharactersOpponent(data);
-            }
-        }
-
-        channel.subscribe(ClientEvent.characters, listener);
-
-        return () => channel.unsubscribe(ClientEvent.characters, listener);
-    }, [channel]);
-
-    // guess
-    useEffect(() => {
-        const listener = ({ data: guess, clientId }: { data: CharacterProps, clientId: string }) => {
-            if (clientId !== settings.clientId) {
-                setRoundCharacterGuessed(guess);
-            }
-        }
-
-        channel.subscribe(ClientEvent.guess, listener);
-
-        return () => channel.unsubscribe(ClientEvent.guess, listener);
-    }, [channel]);
+        return () => window.removeEventListener("beforeunload", listener, false);
+    }, []);
 
     return null;
 }

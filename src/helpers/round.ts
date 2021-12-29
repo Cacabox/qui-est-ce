@@ -1,59 +1,34 @@
-import { atom, selector } from "recoil";
+import { atomFamily } from "recoil";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
-import { getChannel } from "@helpers/client";
+import { firestoreClient } from "@helpers/client";
 
-import type { CharacterProps } from "@components/Character";
-import { ClientEvent } from "@components/Client";
+export type RoundState = "not-started" | "running" | "finished";
 
-export type RoundState = "not-started" | "choose-character" | "running" | "finished";
+export const getRoundState = atomFamily<RoundState, string>({
+    key              : "getRoundState",
+    default          : "not-started",
+    effects_UNSTABLE : path => [
+        ({ setSelf, onSet }) => {
+            const roomDoc = doc(firestoreClient, path);
 
-export const roundStateAtom = atom<RoundState>({
-    key     : "roundStateAtom",
-    default : "not-started",
-});
+            onSet((newValue) => {
+                setDoc(roomDoc, {
+                    roundState: newValue,
+                }, { merge: true });
+            });
 
-export const publishRoundState = selector<RoundState>({
-    key: "publishRoundState",
-    get: ({ get }) => get(roundStateAtom),
-    set: ({ get }, newValue) => {
-        const oldValue = get(roundStateAtom);
+            const unsubscribe = onSnapshot(roomDoc, (doc) => {
+                const data = doc.data();
 
-        if (oldValue !== newValue) {
-            const channel = get(getChannel);
+                if(data?.roundState) {
+                    setSelf(data.roundState);
+                } else {
+                    setSelf("not-started");
+                }
+            });
 
-            channel.publish(ClientEvent.state, newValue);
-        }
-    }
-});
-
-const roundCharactersAtom = atom<CharacterProps[]>({
-    key     : "roundCharactersAtom",
-    default : [],
-});
-
-export const publishRoundCharacters = selector<CharacterProps[]>({
-    key: "publishRoundCharacters",
-    get: ({ get }) => get(roundCharactersAtom),
-    set: ({ get, set }, newValue) => {
-        const channel = get(getChannel);
-
-        set(roundCharactersAtom, newValue);
-
-        channel.publish(ClientEvent.characters, newValue);
-    }
-});
-
-export const getRoundCharactersOpponent = atom<CharacterProps[]>({
-    key     : "getRoundCharactersOpponent",
-    default : []
-});
-
-export const getRoundCharacterToGuess = atom<CharacterProps | undefined>({
-    key     : "getRoundCharacterToGuess",
-    default : undefined,
-});
-
-export const getRoundCharacterGuessed = atom<CharacterProps | undefined>({
-    key     : "roundCharacterGuessedAtom",
-    default : undefined,
+            return () => unsubscribe();
+        },
+    ]
 });

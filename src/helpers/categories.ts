@@ -1,31 +1,59 @@
-import { selector } from "recoil";
-// import { getI18n } from "react-i18next";
+import { atomFamily, selector } from "recoil";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
-import { getCharacters } from "@helpers/character";
+import { getAllCharacters } from "@helpers/character";
+import { firestoreClient } from "@helpers/client";
 
-export const getCategories = selector<string[]>({
+interface Categorie {
+    name  : string,
+    count : number,
+}
+
+export const getCategories = selector<Categorie[]>({
     key: "getCategories",
     get: ({ get }) => {
-        const characters = get(getCharacters);
+        const characters = get(getAllCharacters);
 
-        return characters.reduce<string[]>((previous, current) => {
-            let categories = [...current.categories];
+        return characters.reduce<Categorie[]>((previous, current) => {
+            current.categories.map((categorie) => {
+                const found = previous.find(_ => _.name === categorie);
 
-            // const { t } = useTranslation();
-            // console.log(getI18n());
-
-            if (categories.length === 0) {
-                // categories.push(getI18n().t("lobby.other-categories"))
-                categories.push("lobby.other-categories")
-            }
-
-            categories.map((categorie) => {
-                if (!previous.includes(categorie)) {
-                    previous.push(categorie);
+                if (!found) {
+                    previous.push({ name: categorie, count: 1 });
+                } else {
+                    found.count++;
                 }
             });
 
             return previous;
-        }, []).sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
+        }, []).sort((a, b) => a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase()));
     },
+});
+
+export const getCategoriesBanned = atomFamily<string[], string>({
+    key              : "getCategoriesBanned",
+    default          : [],
+    effects_UNSTABLE : path => [
+        ({ setSelf, onSet }) => {
+            const roomDoc = doc(firestoreClient, path);
+
+            onSet((newValue) => {
+                setDoc(roomDoc, {
+                    categoriesBanned: newValue,
+                }, { merge: true });
+            });
+
+            const unsubscribe = onSnapshot(roomDoc, (doc) => {
+                const data = doc.data();
+
+                if(data?.categoriesBanned) {
+                    setSelf(data.categoriesBanned);
+                } else {
+                    setSelf([]);
+                }
+            });
+
+            return () => unsubscribe();
+        },
+    ]
 });

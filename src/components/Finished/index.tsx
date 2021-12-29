@@ -1,32 +1,34 @@
 import React, { useEffect } from "react";
-import { useRecoilRefresher_UNSTABLE, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
-import { getCharacters } from "@helpers/character";
-import { getRoundCharactersOpponent, publishRoundCharacters, publishRoundState } from "@helpers/round";
+import { getCharacterGuessForUser, getCharacterSecretForUser } from "@helpers/character";
+import { getFirestorePath } from "@helpers/client";
+import { getRoundState } from "@helpers/round";
 
 import "./style.css";
 
 export const Finished = () => {
-    const setPublishRoundState = useSetRecoilState(publishRoundState);
+    const path = useRecoilValue(getFirestorePath);
 
-    const setCharactersPlayer   = useSetRecoilState(publishRoundCharacters);
-    const setCharactersOpponent = useSetRecoilState(getRoundCharactersOpponent);
-
-    const refreshCharacters = useRecoilRefresher_UNSTABLE(getCharacters);
+    const setRoundState              = useSetRecoilState(getRoundState(path.room));
+    const setMyCharacterSecret       = useSetRecoilState(getCharacterSecretForUser(path.me));
+    const setMyGuessed               = useSetRecoilState(getCharacterGuessForUser(path.me));
+    const setOpponentCharacterSecret = useSetRecoilState(getCharacterSecretForUser(path.opponent));
+    const setOpponentGuessed         = useSetRecoilState(getCharacterGuessForUser(path.opponent));
 
     useEffect(() => {
-        refreshCharacters();
-
-        setCharactersPlayer([]);
-        setCharactersOpponent([]);
-    });
+        setMyCharacterSecret(undefined);
+        setMyGuessed(undefined);
+        setOpponentCharacterSecret(undefined);
+        setOpponentGuessed(undefined);
+    }, []);
 
     const { t } = useTranslation();
 
     return (
         <div className="finished">
-            <button className="finished--start-again" onClick={ () => setPublishRoundState("not-started") }>{ t("finished.start-again") }</button>
+            <button className="finished--start-again" onClick={ () => setRoundState("not-started") }>{ t("finished.start-again") }</button>
         </div>
     );
 }

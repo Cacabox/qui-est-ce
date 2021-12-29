@@ -3,24 +3,28 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
-import { ClientEvent } from "@components/Client";
 import { Character, CharacterProps } from "@components/Character";
+import { ChooseCharacter } from "@components/ChooseCharacter";
 import { Plateau } from "@components/Plateau";
 
-import { getChannel } from "@helpers/client";
-import { getRoundCharacterToGuess, getRoundCharacterGuessed, publishRoundCharacters, publishRoundState } from "@helpers/round";
+import { getCharacterGuessForUser, getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
+import { getFirestorePath } from "@helpers/client";
+import { getOpponent } from "@helpers/players";
+import { getRoundState } from "@helpers/round";
 
 import "./style.css";
 
 export const Scene = () => {
-    const channel = useRecoilValue(getChannel);
+    const path = useRecoilValue(getFirestorePath);
 
-    const charactersPlayer = useRecoilValue(publishRoundCharacters);
-    const characterToGuess = useRecoilValue(getRoundCharacterToGuess);
+    const myCharacters     = useRecoilValue(getCharactersForUser(path.me));
+    const characterSecret  = useRecoilValue(getCharacterSecretForUser(path.opponent));
+    const opponent         = useRecoilValue(getOpponent);
 
-    const [characterGuessed, setCharacterGuessed] = useRecoilState(getRoundCharacterGuessed);
+    const setOpponentGuessed    = useSetRecoilState(getCharacterGuessForUser(path.opponent));
+    const [myGuess, setMyGuess] = useRecoilState(getCharacterGuessForUser(path.me));
 
-    const setPublishRoundState = useSetRecoilState(publishRoundState);
+    const setRoundState = useSetRecoilState(getRoundState(path.room));
 
     const [charactersHidden, setCharactersHidden] = useState<CharacterProps[]>([]);
     const [isGuessing, setGuess]                  = useState<boolean>(false);
@@ -30,7 +34,7 @@ export const Scene = () => {
             return;
         }
 
-        channel.publish(ClientEvent.guess, character);
+        setOpponentGuessed(character);
 
         setGuess(false);
     }
@@ -44,9 +48,9 @@ export const Scene = () => {
     }
 
     const loose = () => {
-        setCharacterGuessed(undefined);
+        setMyGuess(undefined);
 
-        setPublishRoundState("finished");
+        setRoundState("finished");
     }
 
     const className = ["scene--plateau"];
@@ -62,10 +66,14 @@ export const Scene = () => {
 
     const { t } = useTranslation();
 
+    if (!characterSecret) {
+        return <ChooseCharacter />;
+    }
+
     return (
         <div className="scene">
             <div className={ className.join(" ") }>
-                <Plateau characters={ charactersPlayer } charactersHidden={ charactersHidden } onClick={ isGuessing ? characterGuess : characterSelect } />
+                <Plateau characters={ myCharacters } charactersHidden={ charactersHidden } onClick={ isGuessing ? characterGuess : characterSelect } />
 
                 <AnimatePresence>
                     <motion.button
@@ -80,14 +88,23 @@ export const Scene = () => {
                 </AnimatePresence>
             </div>
 
-            { characterToGuess &&
+            { characterSecret &&
                 <div className="scene--opponent">
-                    <Character character={ characterToGuess } />
+                    { opponent &&
+                        <div className="scene--opponent__info">
+                            <div className="scene--opponent__name">{ opponent.name }</div>
+                            <div>{ t("scene.must-guess") }</div>
+                        </div>
+                    }
+
+                    <div className="scene--opponent__character">
+                        <Character character={ characterSecret } />
+                    </div>
                 </div>
             }
 
             <AnimatePresence>
-                { characterGuessed &&
+                { myGuess &&
                     <div className="scene--characterguessed">
                         <motion.div
                             className="scene--characterguessed__content"
@@ -97,14 +114,14 @@ export const Scene = () => {
                             variants={ variants }
                             exit={ variants.hidden }
                         >
-                            <div>{ t("plateau.guess") } <span className="scene--characterguessed__name">{ characterGuessed.name }</span> ?</div>
+                            <div>{ t("plateau.guess") } <span className="scene--characterguessed__name">{ myGuess.name }</span> ?</div>
 
-                            { characterGuessed.id === characterToGuess?.id &&
+                            { myGuess.id === characterSecret.id &&
                                 <button onClick={ () => loose() }>{ t("plateau.yes") }</button>
                             }
 
-                            { characterGuessed.id !== characterToGuess?.id &&
-                                <button onClick={ () => setCharacterGuessed(undefined) }>{ t("plateau.no") }</button>
+                            { myGuess.id !== characterSecret.id &&
+                                <button onClick={ () => setMyGuess(undefined) }>{ t("plateau.no") }</button>
                             }
                         </motion.div>
                     </div>

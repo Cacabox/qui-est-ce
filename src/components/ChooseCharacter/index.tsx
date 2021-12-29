@@ -5,19 +5,20 @@ import { useTranslation } from "react-i18next";
 import type { CharacterProps } from "@components/Character";
 import { Plateau } from "@components/Plateau";
 
-import { getRoundCharactersOpponent, getRoundCharacterToGuess, roundStateAtom } from "@helpers/round";
+import { getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
+import { getFirestorePath } from "@helpers/client";
 
 import "./style.css";
 
 export const ChooseCharacter = () => {
-    const setCharacterToGuess = useSetRecoilState(getRoundCharacterToGuess);
-    const setRoundState       = useSetRecoilState(roundStateAtom);
+    const path = useRecoilValue(getFirestorePath);
 
-    const opponentCharacters = useRecoilValue(getRoundCharactersOpponent);
+    const setCharacterSecret = useSetRecoilState(getCharacterSecretForUser(path.opponent));
+
+    const opponentCharacters = useRecoilValue(getCharactersForUser(path.opponent));
 
     const choose = (character: CharacterProps) => {
-        setCharacterToGuess(character);
-        setRoundState("running");
+        setCharacterSecret(character);
     };
 
     const { t } = useTranslation();

@@ -47,6 +47,7 @@
 
     border-radius: 50%;
     box-shadow: 0 0 15px rgba(0, 0, 0, .85);
+    border-width: 4px;
 
     font-size: 56px;
 
@@ -63,7 +64,16 @@
     bottom: 0;
     z-index: 1000;
 
-    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 16px;
+    height: 400px;
+    width: 256px;
+
+    overflow: hidden;
 
     background-color: #1156FC;
 
@@ -74,12 +84,40 @@
     border-bottom: 0;
 }
 
-.scene--opponent,
-.scene--opponent .character {
-    display: flex;
-    width: 157px;
-    height: 293px;
+.scene--opponent__info {
+    flex: 1 1 auto;
 
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+
+    margin-right: 16px;
+
+    overflow: hidden;
+
+    font-size: 36px;
+    text-shadow: 0 0 5px #000000;
+}
+
+.scene--opponent__name {
+    color: #F7115E;
+    font-size: 56px;
+
+    text-align: left;
+
+    word-break: break-all;
+    white-space: pre;
+    overflow: hidden;
+}
+
+.scene--opponent__character {
+    width: 157px;
+    flex-shrink: 0;
+}
+
+.scene--opponent__character .character--box {
+    cursor: default;
 }
 
 .scene--characterguessed {

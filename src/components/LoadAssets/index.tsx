@@ -6,6 +6,7 @@ import "../../../assets/case-background.webp";
 import "../../../assets/case-front.webp";
 import "../../../assets/plateau-background.webp";
 import "../../../assets/plateau-front.webp";
+import "../../../assets/TwitchGlitchPurple.svg";
 
 export const LoadAssets = () => {
     const assets = [
@@ -13,6 +14,7 @@ export const LoadAssets = () => {
         "assets/case-front.webp",
         "assets/plateau-background.webp",
         "assets/plateau-front.webp",
+        "assets/TwitchGlitchPurple.svg",
     ];
 
     return (

@@ -6,11 +6,14 @@ import ReactDOM from "react-dom";
 import { RecoilRoot } from "recoil";
 
 import { App } from "@components/App";
+import { ErrorBoundary } from "@components/ErrorBoundary";
 
 import "../assets/favicon.png";
 
 ReactDOM.render((
     <RecoilRoot>
-        <App />
+        <ErrorBoundary>
+            <App />
+        </ErrorBoundary>
     </RecoilRoot>
 ), document.querySelector("#app"));

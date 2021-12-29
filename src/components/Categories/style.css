@@ -1,0 +1,49 @@
+.categories {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    bottom: 16px;
+    padding: 24px 32px;
+
+    background-color: #000000;
+    border-radius: 8px;
+}
+
+.categories--title {
+    font-size: 48px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.categories--container {
+    display: flex;
+    flex-direction: column;
+
+    padding-left: 16px;
+    border-radius: 8px;
+
+    font-family: "Futura PT";
+    font-size: 20px;
+}
+
+.categorie {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.categorie--label {
+    flex: 1 1 auto;
+    cursor: pointer;
+}
+
+.categorie--checkbox:not(:checked) + .categorie--label {
+    text-decoration: line-through;
+    color: #ffffff;
+    text-decoration-thickness: 2px;
+}
+
+.categorie--checkbox:checked + .categorie--label:hover {
+    color: #E0E300;
+}

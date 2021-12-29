@@ -1,59 +1,74 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { AnimatePresence, motion } from "framer-motion";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
-import type { CharacterProps } from "@components/Character";
+import { Categories } from "@components/Categories";
 
-import { getCharacters } from "@helpers/character";
-import { getChannelId } from "@helpers/client";
-import { getPlayers } from "@helpers/players";
-import { getRoundCharactersOpponent, publishRoundCharacters, roundStateAtom } from "@helpers/round";
+import { getCategoriesBanned } from "@helpers/categories";
+import { getAllCharacters, getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
+import { getFirestorePath } from "@helpers/client";
+import { getMe, getOpponent, getPlayersOnline } from "@helpers/players";
+import { getRoomId } from "@helpers/room";
+import { getRoundState } from "@helpers/round";
 
 import "./style.css";
-import { getCategories } from "@helpers/categories";
 
 export const Lobby = () => {
-    const categories         = useRecoilValue(getCategories);
-    const channelId          = useRecoilValue(getChannelId);
-    const characters         = useRecoilValue(getCharacters);
-    const charactersOpponent = useRecoilValue(getRoundCharactersOpponent);
-    const players            = useRecoilValue(getPlayers);
+    const path = useRecoilValue(getFirestorePath);
 
-
-    const [charactersPlayer, setPublishCharactersPlayer] = useRecoilState(publishRoundCharacters);
-
-    const setRoundState = useSetRecoilState(roundStateAtom);
+    const categoriesBanned = useRecoilValue(getCategoriesBanned(path.room));
+    const characters       = useRecoilValue(getAllCharacters);
+    const me               = useRecoilValue(getMe);
+    const opponent         = useRecoilValue(getOpponent);
+    const playersOnline    = useRecoilValue(getPlayersOnline);
+    const roomId           = useRecoilValue(getRoomId);
 
     const [roomLinkClicked, setRoomLinkClicked] = useState(false);
+
+    const setMyCharacters            = useSetRecoilState(getCharactersForUser(path.me));
+    const setMyCharacterSecret       = useSetRecoilState(getCharacterSecretForUser(path.me));
+    const setOpponentCharacters      = useSetRecoilState(getCharactersForUser(path.opponent));
+    const setOpponentCharacterSecret = useSetRecoilState(getCharacterSecretForUser(path.opponent));
+    const setRoundState              = useSetRecoilState(getRoundState(path.room));
 
     const { t } = useTranslation();
 
     const copyLinkRoom = () => {
         setRoomLinkClicked(true);
 
-        window.navigator.clipboard.writeText(`${ window.location.origin }${ window.location.pathname }?channel=${ channelId }`);
+        window.navigator.clipboard.writeText(`${ window.location.origin }${ window.location.pathname }#room=${ roomId }`);
     }
 
-    const generateCharacters = (): CharacterProps[] => {
-        return characters.filter((character) => !charactersOpponent.includes(character)).slice(0, 8 * 3);
+    const getRoomIdMasked = () => {
+        const tmp = roomId.split("");
+
+        return tmp.map((char, index) => index < tmp.length - 3 ? "⁕" : char);
     }
 
-    const startRound = () => {
-        setPublishCharactersPlayer(generateCharacters());
-    }
+    const startRound = async() => {
+        const numberOfCharacters = 8 * 3;
 
-    useEffect(() => {
-        if (charactersOpponent.length > 0) {
-            if (charactersPlayer.length === 0) {
-                setPublishCharactersPlayer(generateCharacters());
+        setMyCharacterSecret(undefined);
+        setOpponentCharacterSecret(undefined);
+
+        const allowedCharacters = shuffle(characters.filter(character => {
+            for (let categorie of character.categories) {
+                if (categoriesBanned.includes(categorie)) {
+                    return false;
+                }
             }
 
-            if (charactersPlayer.length > 0) {
-                setRoundState("choose-character");
-            }
-        }
-    }, [charactersPlayer, charactersOpponent]);
+            return true;
+        }));
+
+        const myCharacters       = allowedCharacters.slice(0, Math.min(numberOfCharacters, allowedCharacters.length / 2));
+        const opponentCharacters = allowedCharacters.slice(myCharacters.length, myCharacters.length + numberOfCharacters);
+
+        setMyCharacters(myCharacters);
+        setOpponentCharacters(opponentCharacters);
+
+        setRoundState("running");
+    }
 
     useEffect(() => {
         if (roomLinkClicked) {
@@ -63,14 +78,11 @@ export const Lobby = () => {
         }
     }, [roomLinkClicked]);
 
-    const variants = {
-        hidden  : { y: "-100%" },
-        visible : { y: 0 },
-    }
-
-    if (players.length < 2) {
+    if (playersOnline.length < 2) {
         return (
             <div className="lobby">
+                <div className="lobby--room-id">{ t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span></div>
+
                 { t("lobby.waiting") }
 
                 <button className="lobby--link" onClick={ () => copyLinkRoom() }>{ roomLinkClicked ? t("lobby.link-clicked") : t("lobby.link") }</button>
@@ -80,43 +92,44 @@ export const Lobby = () => {
 
     return (
         <div className="lobby">
+            { me && opponent &&
+                <div className="lobby--versus">
+                    <div className="lobby--versus__me">
+                        <img src={ me.photoURL } alt={ me.name } />
+
+                        <span>{ me.name }</span>
+                    </div>
+
+                    <div>vs</div>
+
+                    <div className="lobby--versus__opponent">
+                        <img src={ opponent.photoURL } alt={ opponent.name } />
+
+                        <span>{ opponent.name }</span>
+                    </div>
+                </div>
+            }
+
             <button className="lobby--start" onClick={ () => startRound() }>{ t("lobby.start") }</button>
 
-            { players.length > 2 &&
+            { playersOnline.length > 2 &&
                 <div className="lobby--toomanyplayers">{ t("lobby.too-many-players") }</div>
             }
 
-            {/* <AnimatePresence>
-                <motion.div
-                    className="lobby--categories"
-                    transition={{ duration: 0.3 }}
-                    initial="hide"
-                    animate="visible"
-                    variants={ variants }
-                    exit={ variants.hidden }
-                >
-                    { t("lobby.choose-categories") }
-
-                    <div className="lobby--categories__container">
-                        <label className="lobby--categories__label">
-                            <input type="checkbox" className="lobby--categories__checkbox" defaultChecked />
-
-                            { t("lobby.all-categories") }
-                        </label>
-
-                        { categories.map((categorie, index) => {
-
-                            return (
-                                <label key={ index } className="lobby--categories__label">
-                                    <input type="checkbox" className="lobby--categories__checkbox" defaultChecked />
-
-                                    { categorie }
-                                </label>
-                            );
-                        }) }
-                    </div>
-                </motion.div>
-            </AnimatePresence> */}
+            <Categories />
         </div>
     );
+}
+
+// From : https://github.com/d3/d3-array/blob/main/src/shuffle.js
+function shuffle(array: any[], i0 = 0, i1 = array.length) {
+    let m = i1 - (i0 = +i0);
+
+    while (m) {
+        const i = Math.random() * m-- | 0, t = array[m + i0];
+        array[m + i0] = array[i + i0];
+        array[i + i0] = t;
+    }
+
+    return array;
 }
