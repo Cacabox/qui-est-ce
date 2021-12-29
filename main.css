@@ -320,11 +320,20 @@ a {
     right: 0;
     font-size: 24px;
     margin: 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .lobby--room-id__value {
     font-family: "Futura PT";
     font-size: 20px;
+}
+
+.lobby--new-room {
+    margin: 8px 0 0 0;
+    width: auto;
 }
 
 .lobby--start {
@@ -348,7 +357,7 @@ a {
     height: 64px;
     width: 64px;
     border-radius: 50%;
-    border: 2px solid #E0E300;
+    border: 4px solid #E0E300;
 }
 
 .lobby--versus > div {
@@ -361,56 +370,6 @@ a {
 .lobby--versus__me,
 .lobby--versus__opponent {
     font-size: 32px;
-}
-
-.lobby--categories {
-    display: flex;
-    flex-direction: column;
-
-    position: absolute;
-    bottom: 16px;
-    padding: 24px 32px;
-
-    background-color: #000000;
-    border-radius: 8px;
-}
-
-.lobby--categories__title {
-    font-size: 48px;
-    margin-bottom: 8px;
-    cursor: pointer;
-}
-
-.lobby--categories__container {
-    display: flex;
-    flex-direction: column;
-
-    padding-left: 16px;
-    border-radius: 8px;
-
-    font-family: "Futura PT";
-    font-size: 20px;
-}
-
-.lobby--categorie {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.lobby--categorie__label {
-    flex: 1 1 auto;
-    cursor: pointer;
-}
-
-.lobby--categorie__checkbox:not(:checked) + .lobby--categorie__label {
-    text-decoration: line-through;
-    color: #ffffff;
-    text-decoration-thickness: 2px;
-}
-
-.lobby--categorie__checkbox:checked + .lobby--categorie__label:hover {
-    color: #E0E300;
 }
 
 .login {
