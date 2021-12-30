@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { getDatabase, onValue, ref, update } from "firebase/database";
+import { getDatabase, onDisconnect, onValue, ref, update } from "firebase/database";
 
 import { getDatabasePath } from "@helpers/client";
 import { getPlayers } from "@helpers/players";
@@ -42,10 +42,22 @@ export const Client = () => {
     }, [roomId, user]);
 
     useEffect(() => {
-        const listener = () => {
-            const db = getDatabase();
-            const userDoc = ref(db, path.me);
+        const db = getDatabase();
 
+        const connected = ref(db, ".info/connected");
+        const userDoc   = ref(db, path.me);
+
+        const unsubscribe = onValue(connected, (snapshot) => {
+            if (snapshot.val() == false) {
+                return;
+            }
+
+            onDisconnect(userDoc).update({
+                online: false,
+            });
+        });
+
+        const listener = () => {
             update(userDoc, {
                 online: false,
             });
@@ -53,8 +65,16 @@ export const Client = () => {
 
         window.addEventListener("beforeunload", listener, false);
 
-        return () => window.removeEventListener("beforeunload", listener, false);
-    }, []);
+        return () => {
+            update(userDoc, {
+                online: false,
+            });
+
+            unsubscribe();
+
+            window.removeEventListener("beforeunload", listener, false);
+        }
+    }, [roomId]);
 
     return null;
 }
