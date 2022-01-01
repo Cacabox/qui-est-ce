@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { logEvent } from "firebase/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -8,8 +9,8 @@ import { ChooseCharacter } from "@components/ChooseCharacter";
 import { Plateau } from "@components/Plateau";
 
 import { getCharacterGuessForUser, getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
-import { getDatabasePath } from "@helpers/client";
-import { getOpponent } from "@helpers/players";
+import { analyticsClient, getDatabasePath } from "@helpers/client";
+import { getOpponent, getPlayers } from "@helpers/players";
 import { getRoundState } from "@helpers/round";
 
 import "./style.css";
@@ -20,6 +21,7 @@ export const Scene = () => {
     const myCharacters     = useRecoilValue(getCharactersForUser(path.me));
     const characterSecret  = useRecoilValue(getCharacterSecretForUser(path.opponent));
     const opponent         = useRecoilValue(getOpponent);
+    const players          = useRecoilValue(getPlayers);
 
     const setOpponentGuessed    = useSetRecoilState(getCharacterGuessForUser(path.opponent));
     const [myGuess, setMyGuess] = useRecoilState(getCharacterGuessForUser(path.me));
@@ -28,6 +30,14 @@ export const Scene = () => {
 
     const [charactersHidden, setCharactersHidden] = useState<CharacterProps[]>([]);
     const [isGuessing, setGuess]                  = useState<boolean>(false);
+
+    let numberOfGuess = 0;
+
+    useEffect(() => {
+        if (myGuess !== undefined) {
+            numberOfGuess++;
+        }
+    }, [myGuess]);
 
     const characterGuess = (character: CharacterProps, isHidden?: boolean) => {
         if (isHidden) {
@@ -51,6 +61,8 @@ export const Scene = () => {
         setMyGuess(undefined);
 
         setRoundState("finished");
+
+        logEvent(analyticsClient, "endRound", { players, numberOfGuess });
     }
 
     const className = ["scene--plateau"];

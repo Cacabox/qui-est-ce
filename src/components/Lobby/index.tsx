@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { logEvent } from "firebase/analytics";
 import { useTranslation } from "react-i18next";
 
 import { Categories } from "@components/Categories";
 
 import { getCategoriesBanned } from "@helpers/categories";
 import { getAllCharacters, getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
-import { getDatabasePath } from "@helpers/client";
-import { getMe, getOpponent, getPlayersOnline } from "@helpers/players";
+import { analyticsClient, getDatabasePath } from "@helpers/client";
+import { getMe, getOpponent, getPlayers, getPlayersOnline } from "@helpers/players";
 import { getRoomId } from "@helpers/room";
 import { getRoundState } from "@helpers/round";
 import { getSettings } from "@helpers/settings";
@@ -22,6 +23,7 @@ export const Lobby = () => {
     const characters       = useRecoilValue(getAllCharacters);
     const me               = useRecoilValue(getMe);
     const opponent         = useRecoilValue(getOpponent);
+    const players          = useRecoilValue(getPlayers);
     const playersOnline    = useRecoilValue(getPlayersOnline);
     const roomId           = useRecoilValue(getRoomId);
 
@@ -61,6 +63,8 @@ export const Lobby = () => {
         setHashParams(new Map());
 
         refreshRoomId();
+
+        logEvent(analyticsClient, "newRoom", { players });
     }
 
     const startRound = async() => {
@@ -86,6 +90,8 @@ export const Lobby = () => {
         setOpponentCharacters(opponentCharacters);
 
         setRoundState("running");
+
+        logEvent(analyticsClient, "startRound", { players, categoriesBanned });
     }
 
     useEffect(() => {

@@ -17,6 +17,7 @@ export const Client = () => {
 
     useEffect(() => {
         const db = getDatabase();
+
         const userDoc = ref(db, path.me);
 
         update(userDoc, {
