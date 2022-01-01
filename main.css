@@ -749,11 +749,11 @@ a {
 }
 
 .scene--guessing .character--box:not(:hover) {
-    filter: brightness(0.7);
+    filter: brightness(0.6);
 }
 
 .scene--guessing .character--box.character--box__hiden {
-    filter: brightness(0.7);
+    filter: brightness(0.6);
 }
 
 .scene--guessing .scene--guessing__button {
