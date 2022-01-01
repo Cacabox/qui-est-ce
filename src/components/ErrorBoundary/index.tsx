@@ -58,6 +58,6 @@ const Recovery = () => {
     const { t } = useTranslation();
 
     return (
-        <button onClick={ () => reset() }>{ t("error-boundary.reset") }</button>
+        <button onClick={ reset }>{ t("error-boundary.reset") }</button>
     )
 }

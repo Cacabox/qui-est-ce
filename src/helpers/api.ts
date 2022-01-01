@@ -2,7 +2,7 @@ import { selectorFamily, SerializableParam } from "recoil";
 
 import { getTwitchToken } from "@helpers/token";
 
-export const CLIENTID = "9c0mrfyuyvw3ylkw3qumrtueb50eu9";
+const config = require(`../../${ process.env.CONFIG_FILE }`);
 
 type TwitchApiParam = SerializableParam & {
     path: string,
@@ -26,7 +26,7 @@ export const twitchApi = selectorFamily<any, TwitchApiParam>({
         const request = await fetch(`https://api.twitch.tv/helix/${ path }`, {
             headers: {
                 "Authorization" : `Bearer ${ token }`,
-                "Client-Id"     : CLIENTID,
+                "Client-Id"     : config.twitch.clientId,
             }
         });
 

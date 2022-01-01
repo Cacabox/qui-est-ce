@@ -5,3 +5,5 @@ yarn-error.log
 **/.vscode/*
 
 /dist
+
+config.dev.json

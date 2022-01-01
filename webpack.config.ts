@@ -1,14 +1,15 @@
-import path from "path";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
-import { Configuration as WebpackConfiguration } from "webpack";
+import { Configuration as WebpackConfiguration, DefinePlugin } from "webpack";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+
+import path from "path";
 
 interface Configuration extends WebpackConfiguration {
     devServer?: WebpackDevServerConfiguration;
 }
 
-export default function(): Configuration {
+export default (_: any, argv: { mode: "development" | "production" }): Configuration => {
     return {
         entry: "./src/index.tsx",
         module: {
@@ -49,7 +50,12 @@ export default function(): Configuration {
             filename : "main.js",
             path     : path.resolve(__dirname, "dist")
         },
-        plugins: [new MiniCssExtractPlugin()],
+        plugins: [
+            new MiniCssExtractPlugin(),
+            new DefinePlugin({
+                "process.env.CONFIG_FILE": JSON.stringify(argv.mode === "production" ? "config.json" : "config.dev.json"),
+            }),
+        ],
         devServer: {
             static: {
                 publicPath: path.resolve(__dirname, "dist"),

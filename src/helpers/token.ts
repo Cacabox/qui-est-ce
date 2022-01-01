@@ -2,7 +2,7 @@ import { selector } from "recoil";
 
 import { getHashParams } from "@helpers/utils";
 
-const TWITCH_TOKEN_KEY = "twitch-token";
+const config = require(`../../${ process.env.CONFIG_FILE }`);
 
 export const getTwitchToken = selector<string>({
     key: "getTwitchToken",
@@ -10,11 +10,11 @@ export const getTwitchToken = selector<string>({
         const hashMap = get(getHashParams);
 
         const tokenHash  = hashMap.get("access_token");
-        const tokenLocal = window.localStorage.getItem(TWITCH_TOKEN_KEY);
+        const tokenLocal = window.localStorage.getItem(config.token.key);
 
         if (tokenHash) {
             if (tokenHash !== tokenLocal) {
-                window.localStorage.setItem(TWITCH_TOKEN_KEY, tokenHash);
+                window.localStorage.setItem(config.token.key, tokenHash);
             }
 
             return tokenHash;
@@ -28,12 +28,12 @@ export const getTwitchToken = selector<string>({
     },
     set: ({}, newValue) => {
         if (typeof newValue !== "string") {
-            window.localStorage.removeItem(TWITCH_TOKEN_KEY);
+            window.localStorage.removeItem(config.token.key);
 
             return;
         }
 
-        window.localStorage.setItem(TWITCH_TOKEN_KEY, newValue);
+        window.localStorage.setItem(config.token.key, newValue);
     }
 });
 
@@ -42,7 +42,7 @@ export const getFirebaseToken = selector<string>({
     get: async({ get }) => {
         const twitchToken = get(getTwitchToken);
 
-        const url = new URL("https://europe-west1-qui-est-ce-3621d.cloudfunctions.net/generateToken");
+        const url = new URL(config.token.url);
 
         url.searchParams.append("twitch", twitchToken);
 

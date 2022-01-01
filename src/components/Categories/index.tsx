@@ -27,7 +27,7 @@ export const Categories = () => {
     const { t } = useTranslation();
 
     const variants = {
-        hidden  : { y: "80%" },
+        hidden  : { y: "82%" },
         visible : { y: 0 },
     }
 

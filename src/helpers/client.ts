@@ -7,18 +7,14 @@ import { getRoomId } from "@helpers/room";
 import { getOpponent } from "@helpers/players";
 import { getCurrentUser } from "@helpers/user";
 
+const config = require(`../../${ process.env.CONFIG_FILE }`);
+
 export const apolloClient = new ApolloClient({
-    uri   : "https://api-eu-central-1.graphcms.com/v2/ckx8muqxk0nxy01z0amvy5bqo/master",
+    uri   : config.apollo.url,
     cache : new InMemoryCache(),
 });
 
-export const firebaseClient = initializeApp({
-    apiKey        : "AIzaSyA8_Ap7wETmcIjgZncUn-3mPgmSGpGMiFQ",
-    appId         : "1:465604282379:web:d723f1bd0ceba84b23df0e",
-    databaseURL   : "https://qui-est-ce-3621d-default-rtdb.europe-west1.firebasedatabase.app/",
-    measurementId : "G-42DS3REFD6",
-    projectId     : "qui-est-ce-3621d",
-});
+export const firebaseClient = initializeApp(config.firebase);
 
 export const analyticsClient = getAnalytics(firebaseClient);
 

@@ -1,0 +1,19 @@
+{
+    "apollo": {
+        "url": "https://api-eu-central-1.graphcms.com/v2/ckx8muqxk0nxy01z0amvy5bqo/master"
+    },
+    "firebase": {
+        "apiKey"        : "AIzaSyA8_Ap7wETmcIjgZncUn-3mPgmSGpGMiFQ",
+        "appId"         : "1:465604282379:web:d723f1bd0ceba84b23df0e",
+        "databaseURL"   : "https://qui-est-ce-prod.europe-west1.firebasedatabase.app/",
+        "measurementId" : "G-42DS3REFD6",
+        "projectId"     : "qui-est-ce-3621d"
+    },
+    "token": {
+        "key": "twitch-token",
+        "url": "https://europe-west1-qui-est-ce-3621d.cloudfunctions.net/generateToken"
+    },
+    "twitch": {
+        "clientId": "9c0mrfyuyvw3ylkw3qumrtueb50eu9"
+    }
+}

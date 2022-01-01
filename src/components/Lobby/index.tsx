@@ -110,12 +110,12 @@ export const Lobby = () => {
                         { t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span>
                     </div>
 
-                    <button className="lobby--new-room" onClick={ () => newRoom() }>{ t("lobby.new-room") }</button>
+                    <button className="lobby--new-room" onClick={ newRoom }>{ t("lobby.new-room") }</button>
                 </div>
 
                 { t("lobby.waiting") }
 
-                <button className="lobby--link" onClick={ () => copyLinkRoom() }>{ roomLinkClicked ? t("lobby.link-clicked") : t("lobby.link") }</button>
+                <button className="lobby--link" onClick={ copyLinkRoom }>{ roomLinkClicked ? t("lobby.link-clicked") : t("lobby.link") }</button>
             </div>
         );
     }
@@ -127,7 +127,7 @@ export const Lobby = () => {
                     { t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span>
                 </div>
 
-                <button className="lobby--new-room" onClick={ () => newRoom() }>{ t("lobby.new-room") }</button>
+                <button className="lobby--new-room" onClick={ newRoom }>{ t("lobby.new-room") }</button>
             </div>
 
             { me && opponent &&
@@ -148,7 +148,7 @@ export const Lobby = () => {
                 </div>
             }
 
-            <button className="lobby--start" onClick={ () => startRound() }>{ t("lobby.start") }</button>
+            <button className="lobby--start" onClick={ startRound }>{ t("lobby.start") }</button>
 
             { playersOnline.length > 2 &&
                 <div className="lobby--toomanyplayers">{ t("lobby.too-many-players") }</div>

@@ -1,15 +1,15 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-import { CLIENTID } from "@helpers/api";
-
 import "./style.css";
+
+const config = require(`../../../${ process.env.CONFIG_FILE }`);
 
 export const Login = () => {
     const { t } = useTranslation();
 
     const getTwitchToken = () => {
-        window.location.assign(`https://id.twitch.tv/oauth2/authorize?client_id=${ CLIENTID }&redirect_uri=${ encodeURIComponent(window.location.origin + window.location.pathname) }&response_type=token`);
+        window.location.assign(`https://id.twitch.tv/oauth2/authorize?client_id=${ config.twitch.clientId }&redirect_uri=${ encodeURIComponent(window.location.origin + window.location.pathname) }&response_type=token`);
     }
 
     return (

@@ -129,7 +129,7 @@ export const Scene = () => {
                             <div>{ t("plateau.guess") } <span className="scene--characterguessed__name">{ myGuess.name }</span> ?</div>
 
                             { myGuess.id === characterSecret.id &&
-                                <button onClick={ () => loose() }>{ t("plateau.yes") }</button>
+                                <button onClick={ loose }>{ t("plateau.yes") }</button>
                             }
 
                             { myGuess.id !== characterSecret.id &&
