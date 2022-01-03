@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { logEvent } from "firebase/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -12,8 +12,10 @@ import { Plateau } from "@components/Plateau";
 import { getCharacterGuessForPlayer, getCharacterSecretForPlayer, getCharactersForPlayer } from "@helpers/character";
 import { analyticsClient } from "@helpers/client";
 import { getMe, getOpponent, getPlayersForRoom } from "@helpers/players";
-import { getRoomPath } from "@helpers/room";
-import { getRoomWinner, getRoundState } from "@helpers/round";
+import { getRoomId, getRoomPath } from "@helpers/room";
+import { getRoomWinnerForRoom, getRoundStateForRoom } from "@helpers/round";
+import { getSettings } from "@helpers/settings";
+import { getHashParams } from "@helpers/utils";
 
 import "./style.css";
 
@@ -29,12 +31,16 @@ export const Scene = () => {
 
     const [myGuess, setMyGuess]             = useRecoilState(getCharacterGuessForPlayer(me));
     const [opponentGuess, setOpponentGuess] = useRecoilState(getCharacterGuessForPlayer(opponent));
-    const [roundState, setRoundState]       = useRecoilState(getRoundState);
+    const [roundState, setRoundState]       = useRecoilState(getRoundStateForRoom(room));
+    const [settings, setSettings]           = useRecoilState(getSettings);
 
-    const setWinner = useSetRecoilState(getRoomWinner);
+    const setHashParams = useSetRecoilState(getHashParams);
+    const setWinner     = useSetRecoilState(getRoomWinnerForRoom(room));
 
     const [charactersHidden, setCharactersHidden] = useState<CharacterProps[]>([]);
     const [isGuessing, setGuess]                  = useState<boolean>(false);
+
+    const refreshRoomId = useRecoilRefresher_UNSTABLE(getRoomId);
 
     const characterGuess = (character: CharacterProps, state?: CharacterState) => {
         if (state === "hidden") {
@@ -76,6 +82,21 @@ export const Scene = () => {
         setOpponentGuess({ ...opponentGuess, reason: "wrong" });
     }
 
+    const exit = () => {
+        setRoundState("not-started");
+
+        setSettings({
+            ...settings,
+            lastRoom: undefined,
+        });
+
+        setHashParams(new Map());
+
+        refreshRoomId();
+
+        logEvent(analyticsClient, "exit", { players });
+    }
+
     let numberOfGuess = 0;
 
     useEffect(() => {
@@ -115,6 +136,16 @@ export const Scene = () => {
 
     return (
         <div className="scene">
+            { roundState !== "finished" &&
+                <div className="scene--quit">
+                    <button onClick={ exit }>{ t("scene.quit") }</button>
+                </div>
+            }
+
+            { roundState === "finished" &&
+                <Finished />
+            }
+
             <div className={ className.join(" ") }>
                 <Plateau characters={ myCharacters } charactersHidden={ charactersHidden } opponent={ characterSecret } onClick={ isGuessing ? characterGuess : characterSelect } />
 
@@ -130,10 +161,6 @@ export const Scene = () => {
                             }
                         </motion.button>
                     </AnimatePresence>
-                }
-
-                { roundState === "finished" &&
-                    <Finished />
                 }
             </div>
 

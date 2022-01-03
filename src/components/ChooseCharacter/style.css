@@ -32,31 +32,31 @@
     text-align: center;
     margin: 16px 0 0 0;
 
-    color: #ffffff;
-    text-shadow: 1px 1px 0 #F7115E,
-        -1px 1px 0 #F7115E,
-        1px -1px 0 #F7115E,
-        -1px -1px 0 #F7115E,
-        0px 1px 0 #F7115E,
-        0px -1px 0 #F7115E,
-        -1px 0px 0 #F7115E,
-        1px 0px 0 #F7115E,
-        2px 2px 0 #F7115E,
-        -2px 2px 0 #F7115E,
-        2px -2px 0 #F7115E,
-        -2px -2px 0 #F7115E,
-        0px 2px 0 #F7115E,
-        0px -2px 0 #F7115E,
-        -2px 0px 0 #F7115E,
-        2px 0px 0 #F7115E,
-        1px 2px 0 #F7115E,
-        -1px 2px 0 #F7115E,
-        1px -2px 0 #F7115E,
-        -1px -2px 0 #F7115E,
-        2px 1px 0 #F7115E,
-        -2px 1px 0 #F7115E,
-        2px -1px 0 #F7115E,
-        -2px -1px 0 #F7115E;
+    color: #F7115E;
+    text-shadow: 1px 1px 0 #ffffff,
+        -1px 1px 0 #ffffff,
+        1px -1px 0 #ffffff,
+        -1px -1px 0 #ffffff,
+        0px 1px 0 #ffffff,
+        0px -1px 0 #ffffff,
+        -1px 0px 0 #ffffff,
+        1px 0px 0 #ffffff,
+        2px 2px 0 #ffffff,
+        -2px 2px 0 #ffffff,
+        2px -2px 0 #ffffff,
+        -2px -2px 0 #ffffff,
+        0px 2px 0 #ffffff,
+        0px -2px 0 #ffffff,
+        -2px 0px 0 #ffffff,
+        2px 0px 0 #ffffff,
+        1px 2px 0 #ffffff,
+        -1px 2px 0 #ffffff,
+        1px -2px 0 #ffffff,
+        -1px -2px 0 #ffffff,
+        2px 1px 0 #ffffff,
+        -2px 1px 0 #ffffff,
+        2px -1px 0 #ffffff,
+        -2px -1px 0 #ffffff;
 }
 
 .choosecharacter--modal__container {

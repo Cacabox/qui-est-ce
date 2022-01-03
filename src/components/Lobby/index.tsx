@@ -6,12 +6,12 @@ import { useTranslation } from "react-i18next";
 import { Categories } from "@components/Categories";
 import { Player } from "@components/Player";
 
-import { getCategoriesBanned } from "@helpers/categories";
+import { getCategoriesBannedForRoom } from "@helpers/categories";
 import { getAllCharacters, getCharacterGuessForPlayer, getCharacterSecretForPlayer, getCharactersForPlayer } from "@helpers/character";
 import { analyticsClient } from "@helpers/client";
 import { getMe, getOpponent, getPlayersForRoom, getPlayersOnline } from "@helpers/players";
 import { getRoomId, getRoomPath } from "@helpers/room";
-import { getRoomWinner, getRoundState, isRoomSameBoard } from "@helpers/round";
+import { getRoomWinnerForRoom, getRoundStateForRoom, isRoomSameBoardForRoom } from "@helpers/round";
 import { getSettings } from "@helpers/settings";
 import { getHashParams } from "@helpers/utils";
 
@@ -20,7 +20,7 @@ import "./style.css";
 export const Lobby = () => {
     const room = useRecoilValue(getRoomPath);
 
-    const categoriesBanned = useRecoilValue(getCategoriesBanned);
+    const categoriesBanned = useRecoilValue(getCategoriesBannedForRoom(room));
     const characters       = useRecoilValue(getAllCharacters);
     const me               = useRecoilValue(getMe);
     const opponent         = useRecoilValue(getOpponent);
@@ -36,13 +36,13 @@ export const Lobby = () => {
     const setOpponentCharacters      = useSetRecoilState(getCharactersForPlayer(opponent));
     const setOpponentCharacterGuess  = useSetRecoilState(getCharacterGuessForPlayer(opponent));
     const setOpponentCharacterSecret = useSetRecoilState(getCharacterSecretForPlayer(opponent));
-    const setWinner                  = useSetRecoilState(getRoomWinner);
-    const setRoundState              = useSetRecoilState(getRoundState);
+    const setWinner                  = useSetRecoilState(getRoomWinnerForRoom(room));
+    const setRoundState              = useSetRecoilState(getRoundStateForRoom(room));
     const setHashParams              = useSetRecoilState(getHashParams);
 
 
     const [settings, setSettings]     = useRecoilState(getSettings);
-    const [isSameBoard, setSameBoard] = useRecoilState(isRoomSameBoard);
+    const [isSameBoard, setSameBoard] = useRecoilState(isRoomSameBoardForRoom(room));
 
     const refreshRoomId = useRecoilRefresher_UNSTABLE(getRoomId);
 

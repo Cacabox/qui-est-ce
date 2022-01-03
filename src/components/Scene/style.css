@@ -112,3 +112,21 @@
 .scene--guessing .scene--guessing__button svg {
     fill: #E0E300;
 }
+
+.scene--quit {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+.scene--quit button {
+    width: auto;
+    color: #1156FC;
+    border-color: #1156FC;
+    background-color: transparent;
+}
+
+.scene--quit button:hover {
+    color: #E0E300;
+    background-color: #1156FC;
+}

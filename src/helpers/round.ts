@@ -1,19 +1,16 @@
-import { atom } from "recoil";
+import { atomFamily } from "recoil";
 import { getDatabase, onValue, ref, remove, update } from "firebase/database";
 
-import { getRoomPath } from "@helpers/room";
 import { Player } from "@helpers/players";
 
 export type RoundState = "not-started" | "running" | "finished";
 
-export const getRoundState = atom<RoundState>({
-    key              : "getRoundState",
+export const getRoundStateForRoom = atomFamily<RoundState, string>({
+    key              : "getRoundStateForRoom",
     default          : "not-started",
-    effects_UNSTABLE : [
-        ({ setSelf, onSet, getLoadable }) => {
+    effects_UNSTABLE : room => [
+        ({ setSelf, onSet }) => {
             const db = getDatabase();
-
-            const room = getLoadable(getRoomPath).contents;
 
             const parentDoc = ref(db, room);
             const childDoc  = ref(db, `${ room }/roundState`);
@@ -31,14 +28,12 @@ export const getRoundState = atom<RoundState>({
     ]
 });
 
-export const isRoomSameBoard = atom<boolean>({
-    key              : "isRoomSameBoard",
+export const isRoomSameBoardForRoom = atomFamily<boolean, string>({
+    key              : "isRoomSameBoardForRoom",
     default          : false,
-    effects_UNSTABLE : [
-        ({ setSelf, onSet, getLoadable }) => {
+    effects_UNSTABLE : room => [
+        ({ setSelf, onSet }) => {
             const db = getDatabase();
-
-            const room = getLoadable(getRoomPath).contents;
 
             const parentDoc = ref(db, room);
             const childDoc  = ref(db, `${ room }/sameBoard`);
@@ -56,14 +51,12 @@ export const isRoomSameBoard = atom<boolean>({
     ]
 });
 
-export const getRoomWinner = atom<Player | undefined>({
+export const getRoomWinnerForRoom = atomFamily<Player | undefined, string>({
     key     : "isRoomWinner",
     default : undefined,
-    effects_UNSTABLE : [
-        ({ setSelf, onSet, getLoadable }) => {
+    effects_UNSTABLE : room => [
+        ({ setSelf, onSet }) => {
             const db = getDatabase();
-
-            const room = getLoadable(getRoomPath).contents;
 
             const parentDoc = ref(db, room);
             const childDoc  = ref(db, `${ room }/roomWinner`);

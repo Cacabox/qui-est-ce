@@ -38,7 +38,8 @@
             "yes": "Oui"
         },
         "scene": {
-            "must-guess": "doit deviner"
+            "must-guess": "doit deviner",
+            "quit": "Quitter"
         }
     }
 }

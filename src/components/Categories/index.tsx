@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
-import { getCategories, getCategoriesBanned } from "@helpers/categories";
+import { getCategories, getCategoriesBannedForRoom } from "@helpers/categories";
 import { getRoomPath } from "@helpers/room";
 
 import "./style.css";
@@ -12,7 +12,7 @@ export const Categories = () => {
     const categories = useRecoilValue(getCategories);
     const room       = useRecoilValue(getRoomPath);
 
-    const [categoriesBanned, setCategoriesBanned] = useRecoilState(getCategoriesBanned);
+    const [categoriesBanned, setCategoriesBanned] = useRecoilState(getCategoriesBannedForRoom(room));
 
     const [toggleCategorie, setToggleCategorie] = useState(true);
 

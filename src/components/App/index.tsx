@@ -8,8 +8,8 @@ import { Lobby } from "@components/Lobby";
 import { Login } from "@components/Login";
 import { Scene } from "@components/Scene";
 
-import { getRoundState } from "@helpers/round";
-import { getRoomId } from "@helpers/room";
+import { getRoundStateForRoom } from "@helpers/round";
+import { getRoomId, getRoomPath } from "@helpers/room";
 import { getSettings } from "@helpers/settings";
 import { getTwitchToken } from "@helpers/token";
 
@@ -46,7 +46,9 @@ export const App = () => {
 }
 
 const Game = () => {
-    const roundState = useRecoilValue(getRoundState);
+    const room = useRecoilValue(getRoomPath);
+
+    const roundState = useRecoilValue(getRoundStateForRoom(room));
 
     switch(roundState) {
         case "not-started":

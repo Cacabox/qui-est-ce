@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import { Character, CharacterPositionProps, CharacterProps, CharacterState } from "@components/Character";
 
 import { getMe, getOpponent } from "@helpers/players";
-import { getRoomWinner } from "@helpers/round";
+import { getRoomPath } from "@helpers/room";
+import { getRoomWinnerForRoom } from "@helpers/round";
 
 import "./style.css";
 
@@ -76,8 +77,10 @@ export const Plateau = ({
     const [disabled, setDisabled]           = useState(false);
     const [overrideState, setOverrideState] = useState<CharacterState | undefined>(undefined);
 
+    const room = useRecoilValue(getRoomPath);
+
     const opponentPlayer = useRecoilValue(getOpponent);
-    const winner         = useRecoilValue(getRoomWinner);
+    const winner         = useRecoilValue(getRoomWinnerForRoom(room));
     const me             = useRecoilValue(getMe);
 
     const computeBounds = (bounds: Bounds, relative: Pick<Bounds, "width" | "height" | "padding">): ComputedBounds => {
