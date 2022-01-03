@@ -3,13 +3,11 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 
 import { Client } from "@components/Client";
-import { Finished } from "@components/Finished";
 import { LoadAssets } from "@components/LoadAssets";
 import { Lobby } from "@components/Lobby";
 import { Login } from "@components/Login";
 import { Scene } from "@components/Scene";
 
-import { getDatabasePath } from "@helpers/client";
 import { getRoundState } from "@helpers/round";
 import { getRoomId } from "@helpers/room";
 import { getSettings } from "@helpers/settings";
@@ -48,18 +46,14 @@ export const App = () => {
 }
 
 const Game = () => {
-    const path = useRecoilValue(getDatabasePath);
-
-    const roundState = useRecoilValue(getRoundState(path.room));
+    const roundState = useRecoilValue(getRoundState);
 
     switch(roundState) {
         case "not-started":
             return <Lobby />
 
         case "running":
-            return <Scene />
-
         case "finished":
-            return <Finished />
+            return <Scene />
     }
 }

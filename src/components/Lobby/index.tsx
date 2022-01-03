@@ -4,39 +4,45 @@ import { logEvent } from "firebase/analytics";
 import { useTranslation } from "react-i18next";
 
 import { Categories } from "@components/Categories";
+import { Player } from "@components/Player";
 
 import { getCategoriesBanned } from "@helpers/categories";
-import { getAllCharacters, getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
-import { analyticsClient, getDatabasePath } from "@helpers/client";
-import { getMe, getOpponent, getPlayers, getPlayersOnline } from "@helpers/players";
-import { getRoomId } from "@helpers/room";
-import { getRoundState } from "@helpers/round";
+import { getAllCharacters, getCharacterGuessForPlayer, getCharacterSecretForPlayer, getCharactersForPlayer } from "@helpers/character";
+import { analyticsClient } from "@helpers/client";
+import { getMe, getOpponent, getPlayersForRoom, getPlayersOnline } from "@helpers/players";
+import { getRoomId, getRoomPath } from "@helpers/room";
+import { getRoomWinner, getRoundState, isRoomSameBoard } from "@helpers/round";
 import { getSettings } from "@helpers/settings";
 import { getHashParams } from "@helpers/utils";
 
 import "./style.css";
 
 export const Lobby = () => {
-    const path = useRecoilValue(getDatabasePath);
+    const room = useRecoilValue(getRoomPath);
 
-    const categoriesBanned = useRecoilValue(getCategoriesBanned(path.room));
+    const categoriesBanned = useRecoilValue(getCategoriesBanned);
     const characters       = useRecoilValue(getAllCharacters);
     const me               = useRecoilValue(getMe);
     const opponent         = useRecoilValue(getOpponent);
-    const players          = useRecoilValue(getPlayers);
+    const players          = useRecoilValue(getPlayersForRoom(room));
     const playersOnline    = useRecoilValue(getPlayersOnline);
     const roomId           = useRecoilValue(getRoomId);
 
     const [roomLinkClicked, setRoomLinkClicked] = useState(false);
 
-    const setMyCharacters            = useSetRecoilState(getCharactersForUser(path.me));
-    const setMyCharacterSecret       = useSetRecoilState(getCharacterSecretForUser(path.me));
-    const setOpponentCharacters      = useSetRecoilState(getCharactersForUser(path.opponent));
-    const setOpponentCharacterSecret = useSetRecoilState(getCharacterSecretForUser(path.opponent));
-    const setRoundState              = useSetRecoilState(getRoundState(path.room));
+    const setMyCharacters            = useSetRecoilState(getCharactersForPlayer(me));
+    const setMyCharacterGuess        = useSetRecoilState(getCharacterGuessForPlayer(me));
+    const setMyCharacterSecret       = useSetRecoilState(getCharacterSecretForPlayer(me));
+    const setOpponentCharacters      = useSetRecoilState(getCharactersForPlayer(opponent));
+    const setOpponentCharacterGuess  = useSetRecoilState(getCharacterGuessForPlayer(opponent));
+    const setOpponentCharacterSecret = useSetRecoilState(getCharacterSecretForPlayer(opponent));
+    const setWinner                  = useSetRecoilState(getRoomWinner);
+    const setRoundState              = useSetRecoilState(getRoundState);
     const setHashParams              = useSetRecoilState(getHashParams);
 
-    const [settings, setSettings] = useRecoilState(getSettings);
+
+    const [settings, setSettings]     = useRecoilState(getSettings);
+    const [isSameBoard, setSameBoard] = useRecoilState(isRoomSameBoard);
 
     const refreshRoomId = useRecoilRefresher_UNSTABLE(getRoomId);
 
@@ -71,7 +77,10 @@ export const Lobby = () => {
         const numberOfCharacters = 8 * 3;
 
         setMyCharacterSecret(undefined);
+        setMyCharacterGuess(undefined);
         setOpponentCharacterSecret(undefined);
+        setOpponentCharacterGuess(undefined);
+        setWinner(undefined);
 
         const allowedCharacters = shuffle(characters.filter(character => {
             for (let categorie of character.categories) {
@@ -83,8 +92,10 @@ export const Lobby = () => {
             return true;
         }));
 
-        const myCharacters       = allowedCharacters.slice(0, Math.min(numberOfCharacters, allowedCharacters.length / 2));
-        const opponentCharacters = allowedCharacters.slice(myCharacters.length, myCharacters.length + numberOfCharacters);
+        const maxLength = isSameBoard ? allowedCharacters.length : allowedCharacters.length / 2;
+
+        const myCharacters       = allowedCharacters.slice(0, Math.min(numberOfCharacters, maxLength));
+        const opponentCharacters = isSameBoard ? myCharacters : allowedCharacters.slice(myCharacters.length, myCharacters.length + numberOfCharacters);
 
         setMyCharacters(myCharacters);
         setOpponentCharacters(opponentCharacters);
@@ -130,29 +141,36 @@ export const Lobby = () => {
                 <button className="lobby--new-room" onClick={ newRoom }>{ t("lobby.new-room") }</button>
             </div>
 
-            { me && opponent &&
-                <div className="lobby--versus">
+            { playersOnline.length === 2 && me && opponent &&
+                <div className="lobby--info lobby--versus">
                     <div className="lobby--versus__me">
-                        <img src={ me.photoURL } alt={ me.name } />
-
-                        <span>{ me.name }</span>
+                        <Player { ...me } />
                     </div>
 
                     <div>vs</div>
 
                     <div className="lobby--versus__opponent">
-                        <img src={ opponent.photoURL } alt={ opponent.name } />
+                        <Player { ...opponent } />
+                    </div>
+                </div>
+            }
 
-                        <span>{ opponent.name }</span>
+            { playersOnline.length > 2 &&
+                <div className="lobby--info lobby--toomanyplayers">
+                    { t("lobby.too-many-players") }
+
+                    <div className="lobby--toomanyplayers__list">
+                        { players.map((player) => <Player key={ player.id } { ...player } />) }
                     </div>
                 </div>
             }
 
             <button className="lobby--start" onClick={ startRound }>{ t("lobby.start") }</button>
 
-            { playersOnline.length > 2 &&
-                <div className="lobby--toomanyplayers">{ t("lobby.too-many-players") }</div>
-            }
+            <div className="lobby--same-board">
+                <label htmlFor="same-board">{ t("lobby.use-same-board") }</label>
+                <input type="checkbox" id="same-board" checked={ isSameBoard } onChange={ () => setSameBoard(!isSameBoard) } />
+            </div>
 
             <Categories />
         </div>

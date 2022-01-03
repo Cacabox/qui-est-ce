@@ -22,3 +22,8 @@ export const getRoomId = selector<string>({
         return crypto.getRandomValues(new Uint32Array(2)).join("");
     },
 });
+
+export const getRoomPath = selector<string>({
+    key: "getRoomPath",
+    get: ({ get }) => `rooms/${ get(getRoomId) }`
+});

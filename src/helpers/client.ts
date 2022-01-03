@@ -1,11 +1,8 @@
-import { selector } from "recoil";
+import { atomFamily } from "recoil";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
-import { getRoomId } from "@helpers/room";
-import { getOpponent } from "@helpers/players";
-import { getCurrentUser } from "@helpers/user";
+import { child, getDatabase, onValue, ref, remove, update } from "firebase/database";
 
 const config = require(`../../${ process.env.CONFIG_FILE }`);
 
@@ -18,30 +15,27 @@ export const firebaseClient = initializeApp(config.firebase);
 
 export const analyticsClient = getAnalytics(firebaseClient);
 
-export interface Path {
-    me        : string,
-    opponent ?: string,
-    room      : string,
-    users     : string,
-}
+export const getDataFromPath = atomFamily<any | undefined, string>({
+    key              : "getDataFromPath",
+    default          : undefined,
+    effects_UNSTABLE : path => [
+        ({ setSelf, onSet }) => {
+            const db = getDatabase();
 
-export const getDatabasePath = selector<Path>({
-    key: "getDatabasePath",
-    get: ({ get }) => {
-        const roomId   = get(getRoomId);
-        const me       = get(getCurrentUser);
-        const opponent = get(getOpponent);
+            const parentDoc = ref(db, path);
+            const childDoc  = ref(db, `${ path }/values`);
 
-        const paths: Path = {
-            room  : `rooms/${ roomId }`,
-            users : `rooms/${ roomId }/users`,
-            me    : `rooms/${ roomId }/users/${ me.uid }`,
-        }
+            onSet((newValue) => {
+                if (newValue == undefined) {
+                    remove(child(parentDoc, "values"));
+                } else {
+                    update(parentDoc, { values: newValue });
+                }
+            });
 
-        if (opponent) {
-            paths.opponent = `rooms/${ roomId }/users/${ opponent.id }`;
-        }
+            const unsubscribe = onValue(childDoc, data => setSelf(data.val() || undefined));
 
-        return paths;
-    },
+            return () => unsubscribe();
+        },
+    ],
 });

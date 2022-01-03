@@ -4,15 +4,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 import { getCategories, getCategoriesBanned } from "@helpers/categories";
-import { getDatabasePath } from "@helpers/client";
+import { getRoomPath } from "@helpers/room";
 
 import "./style.css";
 
 export const Categories = () => {
     const categories = useRecoilValue(getCategories);
-    const path       = useRecoilValue(getDatabasePath);
+    const room       = useRecoilValue(getRoomPath);
 
-    const [categoriesBanned, setCategoriesBanned] = useRecoilState(getCategoriesBanned(path.room));
+    const [categoriesBanned, setCategoriesBanned] = useRecoilState(getCategoriesBanned);
 
     const [toggleCategorie, setToggleCategorie] = useState(true);
 

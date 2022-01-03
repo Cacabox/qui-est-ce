@@ -103,10 +103,18 @@ button {
 
 button:hover {
     box-shadow: 0 0 15px #E0E300;
+    color: #1156FC;
+    background-color: #E0E300;
 }
 
 button:disabled {
     background-color: rgba(255, 255, 255, 0.15);
+}
+
+input[type="checkbox"] {
+    height: 20px;
+    width: 20px;
+    margin: 0 8px;
 }
 
 a {

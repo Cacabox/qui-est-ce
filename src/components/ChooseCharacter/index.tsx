@@ -5,17 +5,17 @@ import { useTranslation } from "react-i18next";
 import type { CharacterProps } from "@components/Character";
 import { Plateau } from "@components/Plateau";
 
-import { getCharacterSecretForUser, getCharactersForUser } from "@helpers/character";
-import { getDatabasePath } from "@helpers/client";
+import { getCharacterSecretForPlayer, getCharactersForPlayer } from "@helpers/character";
+import { getOpponent } from "@helpers/players";
 
 import "./style.css";
 
 export const ChooseCharacter = () => {
-    const path = useRecoilValue(getDatabasePath);
+    const opponent = useRecoilValue(getOpponent);
 
-    const setCharacterSecret = useSetRecoilState(getCharacterSecretForUser(path.opponent));
+    const setCharacterSecret = useSetRecoilState(getCharacterSecretForPlayer(opponent));
 
-    const opponentCharacters = useRecoilValue(getCharactersForUser(path.opponent));
+    const opponentCharacters = useRecoilValue(getCharactersForPlayer(opponent));
 
     const choose = (character: CharacterProps) => {
         setCharacterSecret(character);

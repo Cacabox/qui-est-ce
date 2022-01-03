@@ -1,12 +1,15 @@
-import { atom, atomFamily, DefaultValue, selectorFamily } from "recoil";
+import { atom, DefaultValue, selectorFamily } from "recoil";
 import { gql } from "@apollo/client";
-import { child, getDatabase, onValue, ref, remove, update } from "firebase/database";
 
-import { apolloClient } from "@helpers/client";
+import { apolloClient, getDataFromPath } from "@helpers/client";
+import { getRoomPath } from "@helpers/room";
+import { Player } from "@helpers/players";
 
 import type { CharacterProps } from "@components/Character";
 
-export type CharacterStatus = "show" | "hide";
+export interface CharacterGuess extends CharacterProps {
+    reason: "right" | "wrong" | "asking";
+}
 
 interface getPersonnagesQuery {
     data: {
@@ -59,191 +62,113 @@ export const getAllCharacters = atom<CharacterProps[]>({
                 }).filter(_ => _ !== undefined);
 
                 // @ts-expect-error
-                setSelf(characters)
+                setSelf(characters);
             })();
         }
     ]
 });
 
-const charactersForUserAtom = atomFamily<string[], string | undefined>({
-    key              : "charactersForUserAtom",
-    default          : [],
-    effects_UNSTABLE : path => [
-        ({ setSelf, onSet }) => {
-            if (!path) {
-                return;
-            }
-
-            const db = getDatabase();
-
-            const userDoc = ref(db, path);
-
-            onSet((newValue) => {
-                if (newValue == undefined) {
-                    remove(child(userDoc, "characters"));
-                } else {
-                    update(userDoc, {
-                        characters: newValue,
-                    });
-                }
-            });
-
-            const unsubscribe = onValue(userDoc, (doc) => {
-                const data = doc.val() as { characters: string[] };
-
-                if(data?.characters) {
-                    setSelf(data.characters);
-                } else {
-                    setSelf([]);
-                }
-            });
-
-            return () => unsubscribe();
-        },
-    ],
-});
-
-export const getCharactersForUser = selectorFamily<CharacterProps[], string | undefined>({
-    key: "getCharactersForUser",
-    get: path => ({ get }) => {
-        if (!path) {
+export const getCharactersForPlayer = selectorFamily<CharacterProps[], Player | undefined>({
+    key: "getCharactersForPlayer",
+    get: player => ({ get }) => {
+        if (!player) {
             return [];
         }
 
         const characters = get(getAllCharacters);
 
-        const charactersId = get(charactersForUserAtom(path));
+        const room = get(getRoomPath);
+
+        const path = `${ room }/characters/${ player.id }`;
+
+        const charactersId = get(getDataFromPath(path)) || [];
 
         // @ts-expect-error
         const result: CharacterProps[] = charactersId.map(id => characters.find(character => character.id === id)).filter(_ => _ != undefined);
 
         return result;
     },
-    set: path => ({ set }, newValue) => {
-        if (!path || newValue instanceof DefaultValue) {
+    set: player => ({ set, get }, newValue) => {
+        if (!player || newValue instanceof DefaultValue) {
             return;
         }
 
-        set(charactersForUserAtom(path), newValue.map(_ => _.id));
+        const room = get(getRoomPath);
+
+        const path = `${ room }/characters/${ player.id }`
+
+        set(getDataFromPath(path), newValue.map(_ => _.id));
     }
 });
 
-const characterSecretForUserAtom = atomFamily<string | undefined, string | undefined>({
-    key              : "characterSecretForUserAtom",
-    default          : undefined,
-    effects_UNSTABLE : path => [
-        ({ setSelf, onSet }) => {
-            if (!path) {
-                return;
-            }
-
-            const db = getDatabase();
-
-            const userDoc = ref(db, path);
-
-            onSet((newValue) => {
-                if (newValue == undefined) {
-                    remove(child(userDoc, "characterSecret"));
-                } else {
-                    update(userDoc, {
-                        characterSecret: newValue,
-                    });
-                }
-            });
-
-            const unsubscribe = onValue(userDoc, (doc) => {
-                const data = doc.val();
-
-                if(data?.characterSecret) {
-                    setSelf(data.characterSecret);
-                } else {
-                    setSelf(undefined);
-                }
-            });
-
-            return () => unsubscribe();
-        },
-    ],
-});
-
-export const getCharacterSecretForUser = selectorFamily<CharacterProps | undefined, string | undefined>({
-    key: "getCharacterSecretForUser",
-    get: path => ({ get }) => {
-        if (!path) {
+export const getCharacterSecretForPlayer = selectorFamily<CharacterProps | undefined, Player | undefined>({
+    key: "getCharacterSecretForPlayer",
+    get: player => ({ get }) => {
+        if (!player) {
             return;
         }
 
         const characters = get(getAllCharacters);
 
-        const charactersId = get(characterSecretForUserAtom(path));
+        const room = get(getRoomPath);
+
+        const path = `${ room }/secret/${ player.id }`;
+
+        const charactersId = get(getDataFromPath(path));
 
         return characters.find(character => character.id === charactersId);
     },
-    set: path => ({ set }, newValue) => {
-        if (!path || newValue instanceof DefaultValue) {
+    set: player => ({ set, get }, newValue) => {
+        if (!player || newValue instanceof DefaultValue) {
             return;
         }
 
-        set(characterSecretForUserAtom(path), newValue?.id);
+        const room = get(getRoomPath);
+
+        const path = `${ room }/secret/${ player.id }`;
+
+        set(getDataFromPath(path), newValue?.id);
     },
 });
 
-const characterGuessForUserAtom = atomFamily<string | undefined, string | undefined>({
-    key              : "characterGuessForUserAtom",
-    default          : undefined,
-    effects_UNSTABLE : path => [
-        ({ setSelf, onSet }) => {
-            if (!path) {
-                return;
-            }
-
-            const db = getDatabase();
-
-            const userDoc = ref(db, path);
-
-            onSet((newValue) => {
-                if (newValue == undefined) {
-                    remove(child(userDoc, "characterGuess"));
-                } else {
-                    update(userDoc, {
-                        characterGuess: newValue,
-                    });
-                }
-            });
-
-            const unsubscribe = onValue(userDoc, (doc) => {
-                const data = doc.val();
-
-                if (data?.characterGuess) {
-                    setSelf(data.characterGuess);
-                } else {
-                    setSelf(undefined);
-                }
-            });
-
-            return () => unsubscribe();
-        },
-    ],
-});
-
-export const getCharacterGuessForUser = selectorFamily<CharacterProps | undefined, string | undefined>({
-    key: "getCharacterGuessForUser",
-    get: path => ({ get }) => {
-        if (!path) {
+export const getCharacterGuessForPlayer = selectorFamily<CharacterGuess | undefined, Player | undefined>({
+    key: "getCharacterGuessForPlayer",
+    get: player => ({ get }) => {
+        if (!player) {
             return;
         }
 
         const characters = get(getAllCharacters);
 
-        const charactersId = get(characterGuessForUserAtom(path));
+        const room = get(getRoomPath);
 
-        return characters.find(character => character.id === charactersId);
-    },
-    set: path => ({ set }, newValue) => {
-        if (!path || newValue instanceof DefaultValue) {
+        const path = `${ room }/guess/${ player.id }`;
+
+        const guess: { id: string, reason: CharacterGuess["reason"] } | undefined = get(getDataFromPath(path));
+
+        if (!guess) {
             return;
         }
 
-        set(characterGuessForUserAtom(path), newValue?.id);
+        const character = characters.find(character => character.id === guess.id);
+
+        if (!character) {
+            throw new Error();
+        }
+
+        const result: CharacterGuess = { ...character, reason: guess.reason }
+
+        return result;
+    },
+    set: player => ({ set, get }, newValue) => {
+        if (!player || newValue instanceof DefaultValue) {
+            return;
+        }
+
+        const room = get(getRoomPath);
+
+        const path = `${ room }/guess/${ player.id }`;
+
+        set(getDataFromPath(path), newValue);
     },
 });

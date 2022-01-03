@@ -1,5 +1,4 @@
 .character {
-    /* overflow: hidden; */
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -7,12 +6,15 @@
 
 .character--box {
     position: relative;
-    cursor: pointer;
 
     max-height: 100%;
     aspect-ratio: 468 / 861;
 
     transition: filter linear 100ms;
+}
+
+.character--box__action {
+    cursor: pointer;
 }
 
 .character--box__background,

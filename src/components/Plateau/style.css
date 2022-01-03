@@ -13,3 +13,72 @@
     position: absolute;
     overflow: hidden;
 }
+
+.plateau--opponent {
+    position: absolute;
+}
+
+.plateau--opponent__row {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.plateau--opponent__info {
+    position: absolute;
+    left: -404px;
+    bottom: -155px;
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+
+    padding: 16px;
+    width: 400px;
+
+    font-size: 36px;
+    text-shadow: 0 0 5px #000000;
+}
+
+.plateau--opponent__name {
+    text-shadow: 2px 2px 0 #F7115E,
+        -2px 2px 0 #F7115E,
+        2px -2px 0 #F7115E,
+        -2px -2px 0 #F7115E,
+        0px 2px 0 #F7115E,
+        0px -2px 0 #F7115E,
+        -2px 0px 0 #F7115E,
+        2px 0px 0 #F7115E,
+        4px 4px 0 #F7115E,
+        -4px 4px 0 #F7115E,
+        4px -4px 0 #F7115E,
+        -4px -4px 0 #F7115E,
+        0px 4px 0 #F7115E,
+        0px -4px 0 #F7115E,
+        -4px 0px 0 #F7115E,
+        4px 0px 0 #F7115E,
+        2px 4px 0 #F7115E,
+        -2px 4px 0 #F7115E,
+        2px -4px 0 #F7115E,
+        -2px -4px 0 #F7115E,
+        4px 2px 0 #F7115E,
+        -4px 2px 0 #F7115E,
+        4px -2px 0 #F7115E,
+        -4px -2px 0 #F7115E;
+    font-size: 56px;
+
+    text-align: left;
+}
+
+.plateau--opponent__arrow {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    right: -90px;
+    top: -25px;
+}

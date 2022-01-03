@@ -1,7 +1,8 @@
-import { atomFamily, selector } from "recoil";
+import { atom, selector } from "recoil";
 import { getDatabase, onValue, ref, update } from "firebase/database";
 
 import { getAllCharacters } from "@helpers/character";
+import { getRoomPath } from "@helpers/room";
 
 interface Categorie {
     name  : string,
@@ -29,30 +30,23 @@ export const getCategories = selector<Categorie[]>({
     },
 });
 
-export const getCategoriesBanned = atomFamily<string[], string>({
+export const getCategoriesBanned = atom<string[]>({
     key              : "getCategoriesBanned",
     default          : [],
-    effects_UNSTABLE : path => [
-        ({ setSelf, onSet }) => {
+    effects_UNSTABLE : [
+        ({ setSelf, onSet, getLoadable }) => {
             const db = getDatabase();
 
-            const roomDoc = ref(db, path);
+            const path = getLoadable(getRoomPath).contents;
+
+            const roomDoc           = ref(db, path);
+            const roomCategoriesDoc = ref(db, `${ path }/categoriesBanned`);
 
             onSet((newValue) => {
-                update(roomDoc, {
-                    categoriesBanned: newValue,
-                });
+                update(roomDoc, { categoriesBanned: newValue });
             });
 
-            const unsubscribe = onValue(roomDoc, (doc) => {
-                const data = doc.val();
-
-                if(data?.categoriesBanned) {
-                    setSelf(data.categoriesBanned);
-                } else {
-                    setSelf([]);
-                }
-            });
+            const unsubscribe = onValue(roomCategoriesDoc, data => setSelf(data.val() || []));
 
             return () => unsubscribe();
         },

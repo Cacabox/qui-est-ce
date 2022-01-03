@@ -11,6 +11,7 @@ export const Textfit = ({
     font: string,
     text: string,
 }) => {
+    const minFontSize = 12;
     const maxFontSize = 24;
 
     const ref = useRef<HTMLDivElement>(null);
@@ -21,6 +22,8 @@ export const Textfit = ({
     const style: React.CSSProperties = {
         whiteSpace: "nowrap",
     }
+
+    const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
     const handleWindowResize  = useDebouncedCallback(() => {
         setWindowSize({
@@ -51,7 +54,7 @@ export const Textfit = ({
 
             element.remove();
 
-            setFontSize(`${ Math.min(100 * (maxWidth / realWidth), maxFontSize) }px`);
+            setFontSize(`${ clamp(100 * (maxWidth / realWidth), minFontSize, maxFontSize) }px`);
         }, 50);
     }, [text, windowSize]);
 

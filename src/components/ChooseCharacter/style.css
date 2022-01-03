@@ -25,14 +25,38 @@
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
-
-    color: #1156FC;
 }
 
 .choosecharacter--modal__title {
     font-size: 48px;
     text-align: center;
     margin: 16px 0 0 0;
+
+    color: #ffffff;
+    text-shadow: 1px 1px 0 #F7115E,
+        -1px 1px 0 #F7115E,
+        1px -1px 0 #F7115E,
+        -1px -1px 0 #F7115E,
+        0px 1px 0 #F7115E,
+        0px -1px 0 #F7115E,
+        -1px 0px 0 #F7115E,
+        1px 0px 0 #F7115E,
+        2px 2px 0 #F7115E,
+        -2px 2px 0 #F7115E,
+        2px -2px 0 #F7115E,
+        -2px -2px 0 #F7115E,
+        0px 2px 0 #F7115E,
+        0px -2px 0 #F7115E,
+        -2px 0px 0 #F7115E,
+        2px 0px 0 #F7115E,
+        1px 2px 0 #F7115E,
+        -1px 2px 0 #F7115E,
+        1px -2px 0 #F7115E,
+        -1px -2px 0 #F7115E,
+        2px 1px 0 #F7115E,
+        -2px 1px 0 #F7115E,
+        2px -1px 0 #F7115E,
+        -2px -1px 0 #F7115E;
 }
 
 .choosecharacter--modal__container {
@@ -63,6 +87,6 @@
     flex-direction: column;
 }
 
-.choosecharacter--modal__container .character--box:hover {
-    box-shadow: 0 0 16px #ffffff;
+.choosecharacter--modal__container .character--box:hover .character--box__front {
+    filter: drop-shadow(0px 0px 10px #E0E300);
 }

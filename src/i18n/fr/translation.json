@@ -10,7 +10,7 @@
             "title": "Choisis la carte pour ton adversaire"
         },
         "error-boundary": {
-            "error": "Oups, ça marche plus :(",
+            "error": "Oups, ça marche plus 🥵",
             "reset": "Réinitialiser"
         },
         "finished": {
@@ -23,6 +23,7 @@
             "room": "Room :",
             "start": "Commencer une partie",
             "too-many-players": "Il y a plus de 2 joueurs dans la room",
+            "use-same-board": "Utiliser le même plateau",
             "waiting": "En attente de l'adversaire"
         },
         "login": {
@@ -30,7 +31,9 @@
             "action": "Se connecter"
         },
         "plateau": {
-            "guess": "Est-ce que c'est",
+            "guess-asking": "Est-ce que c'est",
+            "guess-right": "Oui, c'est",
+            "guess-wrong": "Non, ce n'est pas",
             "no": "Non",
             "yes": "Oui"
         },
