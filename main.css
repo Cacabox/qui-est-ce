@@ -646,31 +646,31 @@ a {
     text-align: center;
     margin: 16px 0 0 0;
 
-    color: #ffffff;
-    text-shadow: 1px 1px 0 #F7115E,
-        -1px 1px 0 #F7115E,
-        1px -1px 0 #F7115E,
-        -1px -1px 0 #F7115E,
-        0px 1px 0 #F7115E,
-        0px -1px 0 #F7115E,
-        -1px 0px 0 #F7115E,
-        1px 0px 0 #F7115E,
-        2px 2px 0 #F7115E,
-        -2px 2px 0 #F7115E,
-        2px -2px 0 #F7115E,
-        -2px -2px 0 #F7115E,
-        0px 2px 0 #F7115E,
-        0px -2px 0 #F7115E,
-        -2px 0px 0 #F7115E,
-        2px 0px 0 #F7115E,
-        1px 2px 0 #F7115E,
-        -1px 2px 0 #F7115E,
-        1px -2px 0 #F7115E,
-        -1px -2px 0 #F7115E,
-        2px 1px 0 #F7115E,
-        -2px 1px 0 #F7115E,
-        2px -1px 0 #F7115E,
-        -2px -1px 0 #F7115E;
+    color: #F7115E;
+    text-shadow: 1px 1px 0 #ffffff,
+        -1px 1px 0 #ffffff,
+        1px -1px 0 #ffffff,
+        -1px -1px 0 #ffffff,
+        0px 1px 0 #ffffff,
+        0px -1px 0 #ffffff,
+        -1px 0px 0 #ffffff,
+        1px 0px 0 #ffffff,
+        2px 2px 0 #ffffff,
+        -2px 2px 0 #ffffff,
+        2px -2px 0 #ffffff,
+        -2px -2px 0 #ffffff,
+        0px 2px 0 #ffffff,
+        0px -2px 0 #ffffff,
+        -2px 0px 0 #ffffff,
+        2px 0px 0 #ffffff,
+        1px 2px 0 #ffffff,
+        -1px 2px 0 #ffffff,
+        1px -2px 0 #ffffff,
+        -1px -2px 0 #ffffff,
+        2px 1px 0 #ffffff,
+        -2px 1px 0 #ffffff,
+        2px -1px 0 #ffffff,
+        -2px -1px 0 #ffffff;
 }
 
 .choosecharacter--modal__container {
@@ -839,6 +839,24 @@ a {
 
 .scene--guessing .scene--guessing__button svg {
     fill: #E0E300;
+}
+
+.scene--quit {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+.scene--quit button {
+    width: auto;
+    color: #1156FC;
+    border-color: #1156FC;
+    background-color: transparent;
+}
+
+.scene--quit button:hover {
+    color: #E0E300;
+    background-color: #1156FC;
 }
 
 .app--loading {
