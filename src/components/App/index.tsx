@@ -38,8 +38,8 @@ export const App = () => {
     if (token === "") {
         return (
             <>
-                <Login />;
-                <Logo />;
+                <Login />
+                <Logo />
             </>
         )
     }
