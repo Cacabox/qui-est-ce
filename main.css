@@ -74,6 +74,9 @@ body.modal--open {
 #app {
     display: flex;
     flex-direction: column;
+
+    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
+    animation: colorTransition 5s alternate infinite;
 }
 
 h1 {
@@ -97,6 +100,8 @@ button {
     font-weight: 600;
 
     cursor: pointer;
+
+    z-index: 1000;
 
     transition: all linear 100ms;
 }
@@ -229,6 +234,64 @@ a {
     100% { background: linear-gradient(200deg, #1156FC 35%, hsl(53, 100%, 50%) 100%); }
 }
 
+.control-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    z-index: 9001;
+}
+
+.control-top--not-started {
+    font-size: 24px;
+
+}
+
+.control-top--not-started__room-id {
+    font-family: "Futura PT";
+    font-size: 20px;
+}
+
+.control-top--not-started__new-room {
+    margin: 8px 0 0 0;
+    width: auto;
+}
+
+.control-top--running {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+.control-top--running__quit {
+    width: auto;
+    color: #1156FC;
+    border-color: #1156FC;
+    background-color: transparent;
+}
+
+.control-top--running__quit:hover {
+    color: #E0E300;
+    background-color: #1156FC;
+}
+
+.control-top--finished {
+    justify-content: center;
+    align-items: center;
+
+    font-size: 48px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    border-radius: 8px;
+
+    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
+    animation: colorTransition 5s alternate infinite;
+}
+
 .loadassets {
     position: absolute;
     top: -1px;
@@ -236,6 +299,57 @@ a {
     width: 1px;
     height: 1px;
     overflow: hidden;
+}
+
+.notification {
+    background-color: rgba(0, 0, 0, .8);
+    margin: 2px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 600px;
+    padding: 16px;
+
+    font-family: "Futura PT";
+    font-size: 32px;
+    font-weight: 600;
+
+    transition: all linear 0.075s;
+}
+
+.scene--characterguessed__name {
+    font-family: "Sweaty Belvin";
+    font-weight: 500;
+    font-size: 40px;
+}
+
+.notification--action {
+    margin: 0;
+    margin-top: 16px;
+}
+
+.notification-center {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+
+    z-index: 9000;
+}
+
+.notification-center > div:first-child .notification {
+    border-top-left-radius: 36px;
+    border-top-right-radius: 36px;
+}
+.notification-center > div:last-child .notification {
+    border-bottom-left-radius: 36px;
+    border-bottom-right-radius: 36px;
 }
 
 .categories {
@@ -248,6 +362,8 @@ a {
 
     background-color: #000000;
     border-radius: 8px;
+
+    z-index: 1000;
 }
 
 .categories--title {
@@ -288,6 +404,19 @@ a {
     color: #E0E300;
 }
 
+.player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.player--inline {
+    display: inline-flex;
+    flex-direction: row;
+}
+
 .player--img {
     height: 64px;
     width: 64px;
@@ -295,12 +424,10 @@ a {
     border: 4px solid #E0E300;
 }
 
-.player {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
+.player--inline .player--img {
+    height: 48px;
+    width: 48px;
+    margin: 0 16px;
 }
 
 .lobby {
@@ -320,31 +447,6 @@ a {
 
     font-size: 68px;
     text-shadow: 0 0 10px rgba(0, 0, 0, .5);
-
-    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
-    animation: colorTransition 5s alternate infinite;
-}
-
-.lobby--room-id {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 24px;
-    margin: 16px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.lobby--room-id__value {
-    font-family: "Futura PT";
-    font-size: 20px;
-}
-
-.lobby--new-room {
-    margin: 8px 0 0 0;
-    width: auto;
 }
 
 .lobby--start {
@@ -406,8 +508,6 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
-    animation: colorTransition 5s alternate infinite;
 }
 
 .login--container {
@@ -431,6 +531,55 @@ a {
 .login--container__logo {
     width: 40px;
     margin-right: 16px;
+}
+
+.logo {
+    position: fixed;
+    left: 10px;
+    z-index: 100;
+
+    max-width: 256px;
+}
+
+.logo--top {
+    top: -20px;
+    max-width: 200px;
+}
+
+.logo:not(.logo--top) {
+    bottom: -20px;
+}
+
+.logo img {
+    width: 100%;
+}
+
+.logo--scale {
+    animation: logoScaleAnimate 2s alternate infinite;
+}
+
+.logo--rotate {
+    animation: logoRotateAnimate 6s alternate infinite;
+}
+
+@keyframes logoScaleAnimate {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.15);
+    }
+}
+
+@keyframes logoRotateAnimate {
+    from {
+        transform: rotate(-15deg);
+    }
+
+    to {
+        transform: rotate(15deg);
+    }
 }
 
 .textfit {
@@ -618,8 +767,6 @@ a {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, .8);
-    z-index: 1000;
     display: flex;
 }
 
@@ -628,20 +775,16 @@ a {
     flex-direction: column;
     flex: 1 1 auto;
 
-    margin: 64px;
+    margin: 16px;
     overflow: hidden;
-
-    border-radius: 6px;
-    border: 20px solid #ffffff;
-    box-shadow: inset 0 0 10px #000000, 0 0 10px #000000;
-
-    background-image: url(assets/plateau-background.webp);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
 }
 
 .choosecharacter--modal__title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
     font-size: 48px;
     text-align: center;
     margin: 16px 0 0 0;
@@ -673,12 +816,25 @@ a {
         -2px -1px 0 #ffffff;
 }
 
+.choosecharacter--modal__title .player .player--name {
+    font-size: 48px;
+}
+
 .choosecharacter--modal__container {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     align-items: center;
+
+    margin: 24px auto;
+    border-radius: 16px;
+    box-shadow: 0 0 0 16px #F7115E;
+
+    background-image: url(assets/plateau-background.webp);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .choosecharacter--list {
@@ -705,27 +861,6 @@ a {
     filter: drop-shadow(0px 0px 10px #E0E300);
 }
 
-.finished {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin: 16px;
-    z-index: 9001;
-
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    font-size: 48px;
-    text-shadow: 0 0 10px rgba(0, 0, 0, .5);
-    border-radius: 8px;
-
-    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
-    animation: colorTransition 5s alternate infinite;
-}
-
 .scene {
     position: fixed;
     top: 0;
@@ -733,6 +868,8 @@ a {
     bottom: 0;
     left: 0;
     padding-top: 52px;
+
+    z-index: 1000;
 
     flex: 1 1 auto;
 
@@ -839,24 +976,6 @@ a {
 
 .scene--guessing .scene--guessing__button svg {
     fill: #E0E300;
-}
-
-.scene--quit {
-    position: fixed;
-    top: 0;
-    right: 0;
-}
-
-.scene--quit button {
-    width: auto;
-    color: #1156FC;
-    border-color: #1156FC;
-    background-color: transparent;
-}
-
-.scene--quit button:hover {
-    color: #E0E300;
-    background-color: #1156FC;
 }
 
 .app--loading {
