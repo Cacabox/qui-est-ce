@@ -17,7 +17,7 @@ export interface CharacterPositionProps extends ComputedBounds {
     zIndex : number,
 }
 
-export type CharacterState =  "extrahidden" | "hidden" | "visible" | "win";
+export type CharacterState = "loose" | "hidden" | "visible" | "win";
 
 export const Character = ({
     animateDelay,
@@ -31,7 +31,7 @@ export const Character = ({
 
     animateDelay ? : number,
     disabled     ? : boolean,
-    onClick      ? : (character: CharacterProps, state ?: CharacterState) => void,
+    onClick      ? : (character: CharacterProps, state: CharacterState) => void,
     position     ? : CharacterPositionProps,
     state        ? : CharacterState,
 }) => {
@@ -70,7 +70,7 @@ export const Character = ({
     }
 
     const childVariants: Variants = {
-        extrahidden : {
+        loose : {
             y          : "95%",
             transition : {
                 duration: 0.1,

@@ -1,0 +1,28 @@
+.notification {
+    background-color: rgba(0, 0, 0, .8);
+    margin: 2px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 600px;
+    padding: 16px;
+
+    font-family: "Futura PT";
+    font-size: 32px;
+    font-weight: 600;
+
+    transition: all linear 0.075s;
+}
+
+.scene--characterguessed__name {
+    font-family: "Sweaty Belvin";
+    font-weight: 500;
+    font-size: 40px;
+}
+
+.notification--action {
+    margin: 0;
+    margin-top: 16px;
+}

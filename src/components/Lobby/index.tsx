@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { AnimatePresence, motion } from "framer-motion";
 import { logEvent } from "firebase/analytics";
 import { useTranslation } from "react-i18next";
 
@@ -12,8 +13,6 @@ import { analyticsClient } from "@helpers/client";
 import { getMe, getOpponent, getPlayersForRoom, getPlayersOnline } from "@helpers/players";
 import { getRoomId, getRoomPath } from "@helpers/room";
 import { getRoomWinnerForRoom, getRoundStateForRoom, isRoomSameBoardForRoom } from "@helpers/round";
-import { getSettings } from "@helpers/settings";
-import { getHashParams } from "@helpers/utils";
 
 import "./style.css";
 
@@ -38,13 +37,8 @@ export const Lobby = () => {
     const setOpponentCharacterSecret = useSetRecoilState(getCharacterSecretForPlayer(opponent));
     const setWinner                  = useSetRecoilState(getRoomWinnerForRoom(room));
     const setRoundState              = useSetRecoilState(getRoundStateForRoom(room));
-    const setHashParams              = useSetRecoilState(getHashParams);
 
-
-    const [settings, setSettings]     = useRecoilState(getSettings);
     const [isSameBoard, setSameBoard] = useRecoilState(isRoomSameBoardForRoom(room));
-
-    const refreshRoomId = useRecoilRefresher_UNSTABLE(getRoomId);
 
     const { t } = useTranslation();
 
@@ -52,25 +46,6 @@ export const Lobby = () => {
         setRoomLinkClicked(true);
 
         window.navigator.clipboard.writeText(`${ window.location.origin }${ window.location.pathname }#room=${ roomId }`);
-    }
-
-    const getRoomIdMasked = () => {
-        const tmp = roomId.split("");
-
-        return tmp.map((char, index) => index < tmp.length - 3 ? "⁕" : char);
-    }
-
-    const newRoom = () => {
-        setSettings({
-            ...settings,
-            lastRoom: undefined,
-        });
-
-        setHashParams(new Map());
-
-        refreshRoomId();
-
-        logEvent(analyticsClient, "newRoom", { players });
     }
 
     const startRound = async() => {
@@ -109,21 +84,13 @@ export const Lobby = () => {
         if (roomLinkClicked) {
             setTimeout(() => {
                 setRoomLinkClicked(false);
-            }, 2000);
+            }, 2_000);
         }
     }, [roomLinkClicked]);
 
     if (playersOnline.length < 2) {
         return (
             <div className="lobby">
-                <div className="lobby--room-id">
-                    <div>
-                        { t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span>
-                    </div>
-
-                    <button className="lobby--new-room" onClick={ newRoom }>{ t("lobby.new-room") }</button>
-                </div>
-
                 { t("lobby.waiting") }
 
                 <button className="lobby--link" onClick={ copyLinkRoom }>{ roomLinkClicked ? t("lobby.link-clicked") : t("lobby.link") }</button>
@@ -131,39 +98,50 @@ export const Lobby = () => {
         );
     }
 
+    const variants = {
+        hidden  : { y: "-100%" },
+        visible : { y: "0%" },
+    }
+
     return (
         <div className="lobby">
-            <div className="lobby--room-id">
-                <div>
-                    { t("lobby.room") } <span className="lobby--room-id__value">{ getRoomIdMasked() }</span>
-                </div>
+            <AnimatePresence>
+                { playersOnline.length === 2 && me && opponent &&
+                    <motion.div
+                        className="lobby--info lobby--versus"
+                        animate={ "visible" }
+                        initial={ "hidden" }
+                        exit={ "hidden" }
+                        variants={ variants }
+                    >
+                        <div className="lobby--versus__me">
+                            <Player { ...me } />
+                        </div>
 
-                <button className="lobby--new-room" onClick={ newRoom }>{ t("lobby.new-room") }</button>
-            </div>
+                        <div>vs</div>
 
-            { playersOnline.length === 2 && me && opponent &&
-                <div className="lobby--info lobby--versus">
-                    <div className="lobby--versus__me">
-                        <Player { ...me } />
-                    </div>
+                        <div className="lobby--versus__opponent">
+                            <Player { ...opponent } />
+                        </div>
+                    </motion.div>
+                }
 
-                    <div>vs</div>
+                { playersOnline.length > 2 &&
+                    <motion.div
+                        className="lobby--info lobby--toomanyplayers"
+                        animate={ "visible" }
+                        initial={ "hidden" }
+                        exit={ "hidden" }
+                        variants={ variants }
+                    >
+                        { t("lobby.too-many-players") }
 
-                    <div className="lobby--versus__opponent">
-                        <Player { ...opponent } />
-                    </div>
-                </div>
-            }
-
-            { playersOnline.length > 2 &&
-                <div className="lobby--info lobby--toomanyplayers">
-                    { t("lobby.too-many-players") }
-
-                    <div className="lobby--toomanyplayers__list">
-                        { players.map((player) => <Player key={ player.id } { ...player } />) }
-                    </div>
-                </div>
-            }
+                        <div className="lobby--toomanyplayers__list">
+                            { players.map((player) => <Player key={ player.id } { ...player } />) }
+                        </div>
+                    </motion.div>
+                }
+            </AnimatePresence>
 
             <button className="lobby--start" onClick={ startRound }>{ t("lobby.start") }</button>
 

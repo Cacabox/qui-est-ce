@@ -4,8 +4,6 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, .8);
-    z-index: 1000;
     display: flex;
 }
 
@@ -14,20 +12,16 @@
     flex-direction: column;
     flex: 1 1 auto;
 
-    margin: 64px;
+    margin: 16px;
     overflow: hidden;
-
-    border-radius: 6px;
-    border: 20px solid #ffffff;
-    box-shadow: inset 0 0 10px #000000, 0 0 10px #000000;
-
-    background-image: url(../../../assets/plateau-background.webp);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
 }
 
 .choosecharacter--modal__title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
     font-size: 48px;
     text-align: center;
     margin: 16px 0 0 0;
@@ -59,12 +53,25 @@
         -2px -1px 0 #ffffff;
 }
 
+.choosecharacter--modal__title .player .player--name {
+    font-size: 48px;
+}
+
 .choosecharacter--modal__container {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     align-items: center;
+
+    margin: 24px auto;
+    border-radius: 16px;
+    box-shadow: 0 0 0 16px #F7115E;
+
+    background-image: url(../../../assets/plateau-background.webp);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .choosecharacter--list {

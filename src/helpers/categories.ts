@@ -1,5 +1,5 @@
 import { atomFamily, selector } from "recoil";
-import { getDatabase, onValue, ref, update } from "firebase/database";
+import { get as getInDb, getDatabase, onValue, ref, update } from "firebase/database";
 
 import { getAllCharacters } from "@helpers/character";
 
@@ -30,9 +30,15 @@ export const getCategories = selector<Categorie[]>({
 });
 
 export const getCategoriesBannedForRoom = atomFamily<string[], string>({
-    key              : "getCategoriesBannedForRoom",
-    default          : [],
-    effects_UNSTABLE : room => [
+    key     : "getCategoriesBannedForRoom",
+    default : room => {
+        const db = getDatabase();
+
+        const roomCategoriesDoc = ref(db, `${ room }/categoriesBanned`);
+
+        return getInDb(roomCategoriesDoc).then(data => data.val() || []);
+    },
+    effects_UNSTABLE: room => [
         ({ setSelf, onSet }) => {
             const db = getDatabase();
 

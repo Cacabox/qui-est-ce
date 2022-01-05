@@ -7,8 +7,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
-    animation: colorTransition 5s alternate infinite;
 }
 
 .login--container {

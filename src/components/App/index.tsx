@@ -3,9 +3,12 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 
 import { Client } from "@components/Client";
+import { ControlTop } from "@components/ControlTop";
 import { LoadAssets } from "@components/LoadAssets";
+import { NotificationCenter } from "@components/NotificationCenter";
 import { Lobby } from "@components/Lobby";
 import { Login } from "@components/Login";
+import { Logo } from "@components/Logo";
 import { Scene } from "@components/Scene";
 
 import { getRoundStateForRoom } from "@helpers/round";
@@ -33,15 +36,26 @@ export const App = () => {
     }, [roomId]);
 
     if (token === "") {
-        return <Login />;
+        return (
+            <>
+                <Login />;
+                <Logo />;
+            </>
+        )
     }
 
     return (
-        <Suspense fallback={<div className="app--loading">{ t("app.loading") }</div>}>
-            <Client />
-            <Game />
+        <>
+            <Suspense fallback={ <div className="app--loading">{ t("app.loading") }</div> }>
+                <Client />
+                <ControlTop />
+                <NotificationCenter />
+                <Game />
+            </Suspense>
+
             <LoadAssets />
-        </Suspense>
+            <Logo />
+        </>
     );
 }
 

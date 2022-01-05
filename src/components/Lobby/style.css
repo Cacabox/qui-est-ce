@@ -15,31 +15,6 @@
 
     font-size: 68px;
     text-shadow: 0 0 10px rgba(0, 0, 0, .5);
-
-    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
-    animation: colorTransition 5s alternate infinite;
-}
-
-.lobby--room-id {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 24px;
-    margin: 16px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.lobby--room-id__value {
-    font-family: "Futura PT";
-    font-size: 20px;
-}
-
-.lobby--new-room {
-    margin: 8px 0 0 0;
-    width: auto;
 }
 
 .lobby--start {

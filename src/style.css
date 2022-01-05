@@ -74,6 +74,9 @@ body.modal--open {
 #app {
     display: flex;
     flex-direction: column;
+
+    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
+    animation: colorTransition 5s alternate infinite;
 }
 
 h1 {
@@ -97,6 +100,8 @@ button {
     font-weight: 600;
 
     cursor: pointer;
+
+    z-index: 1000;
 
     transition: all linear 100ms;
 }

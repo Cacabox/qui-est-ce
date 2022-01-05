@@ -1,3 +1,16 @@
+.player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.player--inline {
+    display: inline-flex;
+    flex-direction: row;
+}
+
 .player--img {
     height: 64px;
     width: 64px;
@@ -5,10 +18,8 @@
     border: 4px solid #E0E300;
 }
 
-.player {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
+.player--inline .player--img {
+    height: 48px;
+    width: 48px;
+    margin: 0 16px;
 }

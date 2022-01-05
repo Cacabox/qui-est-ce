@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { logEvent } from "firebase/analytics";
-import { AnimatePresence, motion } from "framer-motion";
+import confetti from "canvas-confetti";
 import { useTranslation } from "react-i18next";
 
 import { CharacterProps, CharacterState } from "@components/Character";
 import { ChooseCharacter } from "@components/ChooseCharacter";
-import { Finished } from "@components/Finished";
 import { Plateau } from "@components/Plateau";
+import { Logo } from "@components/Logo";
 
 import { getCharacterGuessForPlayer, getCharacterSecretForPlayer, getCharactersForPlayer } from "@helpers/character";
 import { analyticsClient } from "@helpers/client";
+import { addNotificationProxy } from "@helpers/notification";
 import { getMe, getOpponent, getPlayersForRoom } from "@helpers/players";
-import { getRoomId, getRoomPath } from "@helpers/room";
+import { getRoomPath } from "@helpers/room";
 import { getRoomWinnerForRoom, getRoundStateForRoom } from "@helpers/round";
-import { getSettings } from "@helpers/settings";
-import { getHashParams } from "@helpers/utils";
 
 import "./style.css";
 
@@ -32,15 +31,18 @@ export const Scene = () => {
     const [myGuess, setMyGuess]             = useRecoilState(getCharacterGuessForPlayer(me));
     const [opponentGuess, setOpponentGuess] = useRecoilState(getCharacterGuessForPlayer(opponent));
     const [roundState, setRoundState]       = useRecoilState(getRoundStateForRoom(room));
-    const [settings, setSettings]           = useRecoilState(getSettings);
+    const [winner, setWinner]               = useRecoilState(getRoomWinnerForRoom(room));
 
-    const setHashParams = useSetRecoilState(getHashParams);
-    const setWinner     = useSetRecoilState(getRoomWinnerForRoom(room));
+    const addNotification = useSetRecoilState(addNotificationProxy);
 
     const [charactersHidden, setCharactersHidden] = useState<CharacterProps[]>([]);
     const [isGuessing, setGuess]                  = useState<boolean>(false);
+    const [disablePlateau, setDisablePlateau]     = useState<boolean>(false);
+    const [plateauAnimation, setPlateauAnimation] = useState<CharacterState | undefined>();
 
-    const refreshRoomId = useRecoilRefresher_UNSTABLE(getRoomId);
+    const { t } = useTranslation();
+
+    const wait = (time: number) => new Promise(resolve => setTimeout(_ => resolve(true), time));
 
     const characterGuess = (character: CharacterProps, state?: CharacterState) => {
         if (state === "hidden") {
@@ -82,40 +84,148 @@ export const Scene = () => {
         setOpponentGuess({ ...opponentGuess, reason: "wrong" });
     }
 
-    const exit = () => {
-        setRoundState("not-started");
-
-        setSettings({
-            ...settings,
-            lastRoom: undefined,
-        });
-
-        setHashParams(new Map());
-
-        refreshRoomId();
-
-        logEvent(analyticsClient, "exit", { players });
-    }
-
     let numberOfGuess = 0;
 
     useEffect(() => {
-        if (myGuess !== undefined && myGuess.reason === "asking") {
-            numberOfGuess++;
+        if (opponentGuess === undefined || characterSecret === undefined) {
+            return;
         }
-    }, [myGuess]);
+
+        if (opponentGuess.reason !== "asking") {
+            return;
+        }
+
+        const actionRight = {
+            text    : t("plateau.yes"),
+            onClick : rightGuess,
+        }
+
+        const actionWrong = {
+            text    : t("plateau.no"),
+            onClick : wrongGuess,
+        }
+
+        addNotification({
+            text    : `${ t("plateau.guess-asking") } <span class="scene--characterguessed__name">${ opponentGuess.name }</span> ?`,
+            actions : (opponentGuess.id === characterSecret.id) ? [actionRight] : [actionWrong],
+        });
+    }, [opponentGuess, characterSecret]);
 
     useEffect(() => {
         let timeout: any;
 
-        if (myGuess !== undefined && myGuess.reason !== "asking") {
-            setTimeout(() => {
+        if (myGuess !== undefined) {
+            if (myGuess.reason === "asking") {
+                numberOfGuess++;
+
+                return;
+            }
+
+            const text = (myGuess.reason === "right")
+                ? `${ t("plateau.guess-right") } <span class="scene--characterguessed__name">${ myGuess.name }</span> !`
+                : `${ t("plateau.guess-wrong") } <span class="scene--characterguessed__name">${ myGuess.name }</span>.`;
+
+            addNotification({ text });
+
+            timeout = setTimeout(() => {
                 setMyGuess(undefined);
-            }, 5000);
+            }, 5_000);
         }
 
         return () => clearTimeout(timeout);
     }, [myGuess]);
+
+    useEffect(() => {
+        if (!winner || !me || winner.id !== me.id) {
+            return;
+        }
+
+        let isCancelled = false;
+        let confettiInterval: any;
+
+        (async() => {
+            const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+            const confettiOptions: confetti.Options = {
+                particleCount : 100,
+                spread        : 360,
+                startVelocity : 30,
+                ticks         : 100,
+                zIndex        : 8999,
+            }
+
+            setDisablePlateau(true);
+            setPlateauAnimation("loose");
+
+            await wait(150);
+            if (isCancelled) { return }
+
+            setPlateauAnimation("win");
+
+            confettiInterval = setInterval(() => {
+                confetti({
+                    ...confettiOptions,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                });
+
+                confetti({
+                    ...confettiOptions,
+                    origin: { x: randomInRange(0.4, 0.6), y: Math.random() - 0.2 }
+                });
+
+                confetti({
+                    ...confettiOptions,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                });
+            }, 400);
+
+            await wait(10_000);
+            if (isCancelled) { return }
+
+            clearInterval(confettiInterval);
+
+            setPlateauAnimation("hidden");
+            setPlateauAnimation(undefined);
+            setDisablePlateau(false);
+        })();
+
+        return () => {
+            isCancelled = true;
+
+            clearInterval(confettiInterval);
+
+            setPlateauAnimation("hidden");
+            setPlateauAnimation(undefined);
+            setDisablePlateau(false);
+        }
+    }, [winner, me]);
+
+    useEffect(() => {
+        if (!winner || !me || winner.id === me.id) {
+            return;
+        }
+
+        let isCancelled = false;
+
+        (async() => {
+            setPlateauAnimation("loose");
+            setDisablePlateau(true);
+
+            await wait(10_150);
+            if (isCancelled) { return }
+
+            setPlateauAnimation(undefined);
+            setDisablePlateau(false);
+        })();
+
+        return () => {
+            isCancelled = true;
+
+            setPlateauAnimation("hidden");
+            setPlateauAnimation(undefined);
+            setDisablePlateau(false);
+        }
+    }, [winner, me]);
 
     const className = ["scene--plateau"];
 
@@ -123,12 +233,9 @@ export const Scene = () => {
         className.push("scene--guessing");
     }
 
-    const variants = {
-        hidden  : { y: "-100%" },
-        visible : { y: 0 },
+    if (!opponent) {
+        return null;
     }
-
-    const { t } = useTranslation();
 
     if (!characterSecret) {
         return <ChooseCharacter />;
@@ -136,81 +243,30 @@ export const Scene = () => {
 
     return (
         <div className="scene">
-            { roundState !== "finished" &&
-                <div className="scene--quit">
-                    <button onClick={ exit }>{ t("scene.quit") }</button>
-                </div>
-            }
-
-            { roundState === "finished" &&
-                <Finished />
-            }
+            <Logo top />
 
             <div className={ className.join(" ") }>
-                <Plateau characters={ myCharacters } charactersHidden={ charactersHidden } opponent={ characterSecret } onClick={ isGuessing ? characterGuess : characterSelect } />
+                <Plateau
+                    animation={ plateauAnimation }
+                    characters={ myCharacters }
+                    charactersHidden={ charactersHidden }
+                    disabled={ disablePlateau }
+                    opponent={{ player: opponent, secret: characterSecret }}
+                    onClick={ isGuessing ? characterGuess : characterSelect }
+                />
 
                 { roundState !== "finished" &&
-                    <AnimatePresence>
-                        <motion.button
-                            className="scene--guessing__button"
-                            onClick={ () => setGuess(!isGuessing) }
-                        >
-                            { isGuessing
-                                ? <svg height="48" width="48" viewBox="0 0 24 24"><path d="M13.427 3.021h-7.427v-3.021l-6 5.39 6 5.61v-3h7.427c3.071 0 5.561 2.356 5.561 5.427 0 3.071-2.489 5.573-5.561 5.573h-7.427v5h7.427c5.84 0 10.573-4.734 10.573-10.573s-4.733-10.406-10.573-10.406z"/></svg>
-                                : "?"
-                            }
-                        </motion.button>
-                    </AnimatePresence>
+                    <button
+                        className="scene--guessing__button"
+                        onClick={ () => setGuess(!isGuessing) }
+                    >
+                        { isGuessing
+                            ? <svg height="48" width="48" viewBox="0 0 24 24"><path d="M13.427 3.021h-7.427v-3.021l-6 5.39 6 5.61v-3h7.427c3.071 0 5.561 2.356 5.561 5.427 0 3.071-2.489 5.573-5.561 5.573h-7.427v5h7.427c5.84 0 10.573-4.734 10.573-10.573s-4.733-10.406-10.573-10.406z"/></svg>
+                            : "?"
+                        }
+                    </button>
                 }
             </div>
-
-            <AnimatePresence>
-                { opponentGuess && opponentGuess.reason === "asking" &&
-                    <div className="scene--characterguessed">
-                        <motion.div
-                            className="scene--characterguessed__content"
-                            transition={{ duration: 0.3 }}
-                            initial="hidden"
-                            animate="visible"
-                            variants={ variants }
-                            exit={ variants.hidden }
-                        >
-                            <div>{ t("plateau.guess-asking") } <span className="scene--characterguessed__name">{ opponentGuess.name }</span> ?</div>
-
-                            { opponentGuess.id === characterSecret.id &&
-                                <button onClick={ rightGuess }>{ t("plateau.yes") }</button>
-                            }
-
-                            { opponentGuess.id !== characterSecret.id &&
-                                <button onClick={ wrongGuess }>{ t("plateau.no") }</button>
-                            }
-                        </motion.div>
-                    </div>
-                }
-            </AnimatePresence>
-
-            <AnimatePresence>
-                { myGuess && myGuess.reason !== "asking" &&
-                    <div className="scene--characterguessed">
-                        <motion.div
-                            className="scene--characterguessed__content"
-                            transition={{ duration: 0.3 }}
-                            initial="hidden"
-                            animate="visible"
-                            variants={ variants }
-                            exit={ variants.hidden }
-                        >
-                            { myGuess.reason === "right" &&
-                                <div>{ t("plateau.guess-right") } <span className="scene--characterguessed__name">{ myGuess.name }</span> !</div>
-                            }
-
-                            { myGuess.reason === "wrong" &&
-                                <div>{ t("plateau.guess-wrong") } <span className="scene--characterguessed__name">{ myGuess.name }</span>.</div>
-                            }
-                        </motion.div>
-                    </div>
-                }
-            </AnimatePresence>
         </div>
     );
 }

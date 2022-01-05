@@ -12,9 +12,25 @@ export type Player = {
 }
 
 export const getPlayersForRoom = atomFamily<Player[], string>({
-    key              : "getPlayers",
-    default          : [],
-    effects_UNSTABLE : room => [
+    key     : "getPlayers",
+    default : room => {
+        const db = getDatabase();
+
+        const roomUsersDoc = ref(db, `${ room }/users`);
+
+        return getInDb(roomUsersDoc).then((doc) => {
+            const data = doc.val();
+
+            return Promise.all(Object.keys(data).map(async(id) => {
+                const userRef = ref(db, `users/${ id }`);
+
+                const user = await getInDb(userRef);
+
+                return user.val();
+            }));
+        });
+    },
+    effects_UNSTABLE: room => [
         ({ setSelf }) => {
             const db = getDatabase();
 

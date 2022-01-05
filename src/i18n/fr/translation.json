@@ -7,19 +7,20 @@
             "choose-categories": "Catégories"
         },
         "choosecharacter": {
-            "title": "Choisis la carte pour ton adversaire"
+            "title": "Choisis la carte pour"
+        },
+        "control-top": {
+            "new-room": "Nouvelle room",
+            "quit": "Quitter la partie",
+            "start-again": "Nouvelle game ?"
         },
         "error-boundary": {
             "error": "Oups, ça marche plus 🥵",
             "reset": "Réinitialiser"
         },
-        "finished": {
-            "start-again": "Nouvelle game ?"
-        },
         "lobby": {
             "link": "Copier le lien de la room",
             "link-clicked": "Copié",
-            "new-room": "Nouvelle room",
             "room": "Room :",
             "start": "Commencer une partie",
             "too-many-players": "Il y a plus de 2 joueurs dans la room",
@@ -38,8 +39,7 @@
             "yes": "Oui"
         },
         "scene": {
-            "must-guess": "doit deviner",
-            "quit": "Quitter"
+            "must-guess": "doit deviner"
         }
     }
 }

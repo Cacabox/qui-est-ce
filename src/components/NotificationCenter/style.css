@@ -1,0 +1,21 @@
+.notification-center {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+
+    z-index: 9000;
+}
+
+.notification-center > div:first-child .notification {
+    border-top-left-radius: 36px;
+    border-top-right-radius: 36px;
+}
+.notification-center > div:last-child .notification {
+    border-bottom-left-radius: 36px;
+    border-bottom-right-radius: 36px;
+}

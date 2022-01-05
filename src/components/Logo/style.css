@@ -1,0 +1,48 @@
+.logo {
+    position: fixed;
+    left: 10px;
+    z-index: 100;
+
+    max-width: 256px;
+}
+
+.logo--top {
+    top: -20px;
+    max-width: 200px;
+}
+
+.logo:not(.logo--top) {
+    bottom: -20px;
+}
+
+.logo img {
+    width: 100%;
+}
+
+.logo--scale {
+    animation: logoScaleAnimate 2s alternate infinite;
+}
+
+.logo--rotate {
+    animation: logoRotateAnimate 6s alternate infinite;
+}
+
+@keyframes logoScaleAnimate {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.15);
+    }
+}
+
+@keyframes logoRotateAnimate {
+    from {
+        transform: rotate(-15deg);
+    }
+
+    to {
+        transform: rotate(15deg);
+    }
+}

@@ -8,6 +8,8 @@
 
     background-color: #000000;
     border-radius: 8px;
+
+    z-index: 1000;
 }
 
 .categories--title {

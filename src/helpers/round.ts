@@ -1,14 +1,20 @@
 import { atomFamily } from "recoil";
-import { getDatabase, onValue, ref, remove, update } from "firebase/database";
+import { get as getInDb, getDatabase, onValue, ref, remove, update } from "firebase/database";
 
 import { Player } from "@helpers/players";
 
 export type RoundState = "not-started" | "running" | "finished";
 
 export const getRoundStateForRoom = atomFamily<RoundState, string>({
-    key              : "getRoundStateForRoom",
-    default          : "not-started",
-    effects_UNSTABLE : room => [
+    key     : "getRoundStateForRoom",
+    default : room => {
+        const db = getDatabase();
+
+        const doc = ref(db, `${ room }/roundState`);
+
+        return getInDb(doc).then(data => data.val() || "not-started");
+    },
+    effects_UNSTABLE: room => [
         ({ setSelf, onSet }) => {
             const db = getDatabase();
 
@@ -29,9 +35,15 @@ export const getRoundStateForRoom = atomFamily<RoundState, string>({
 });
 
 export const isRoomSameBoardForRoom = atomFamily<boolean, string>({
-    key              : "isRoomSameBoardForRoom",
-    default          : false,
-    effects_UNSTABLE : room => [
+    key     : "isRoomSameBoardForRoom",
+    default : room => {
+        const db = getDatabase();
+
+        const doc = ref(db, `${ room }/sameBoard`);
+
+        return getInDb(doc).then(data => data.val() || false);
+    },
+    effects_UNSTABLE: room => [
         ({ setSelf, onSet }) => {
             const db = getDatabase();
 
@@ -53,8 +65,14 @@ export const isRoomSameBoardForRoom = atomFamily<boolean, string>({
 
 export const getRoomWinnerForRoom = atomFamily<Player | undefined, string>({
     key     : "isRoomWinner",
-    default : undefined,
-    effects_UNSTABLE : room => [
+    default : room => {
+        const db = getDatabase();
+
+        const doc = ref(db, `${ room }/roomWinner`);
+
+        return getInDb(doc).then(data => data.val() || undefined);
+    },
+    effects_UNSTABLE: room => [
         ({ setSelf, onSet }) => {
             const db = getDatabase();
 

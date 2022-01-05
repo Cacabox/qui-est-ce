@@ -1,0 +1,57 @@
+.control-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    z-index: 9001;
+}
+
+.control-top--not-started {
+    font-size: 24px;
+
+}
+
+.control-top--not-started__room-id {
+    font-family: "Futura PT";
+    font-size: 20px;
+}
+
+.control-top--not-started__new-room {
+    margin: 8px 0 0 0;
+    width: auto;
+}
+
+.control-top--running {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+.control-top--running__quit {
+    width: auto;
+    color: #1156FC;
+    border-color: #1156FC;
+    background-color: transparent;
+}
+
+.control-top--running__quit:hover {
+    color: #E0E300;
+    background-color: #1156FC;
+}
+
+.control-top--finished {
+    justify-content: center;
+    align-items: center;
+
+    font-size: 48px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    border-radius: 8px;
+
+    background: linear-gradient(200deg, #1156FC 35%, hsl(169, 100%, 50%) 100%);
+    animation: colorTransition 5s alternate infinite;
+}

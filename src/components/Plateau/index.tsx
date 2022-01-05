@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
-import confetti from "canvas-confetti";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Character, CharacterPositionProps, CharacterProps, CharacterState } from "@components/Character";
 
-import { getMe, getOpponent } from "@helpers/players";
-import { getRoomPath } from "@helpers/room";
-import { getRoomWinnerForRoom } from "@helpers/round";
+import type { Player } from "@helpers/players";
 
 import "./style.css";
 
@@ -26,23 +22,28 @@ export interface ComputedBounds {
     height : string,
 }
 
-export type PlateauAnimation = undefined | "win" | "loose";
-
 const imageSize = {
     width  : 2400,
     height : 1840,
 }
 
 export const Plateau = ({
+    animation,
     characters,
     charactersHidden,
+    disabled,
     onClick,
     opponent,
 }: {
+    animation        ?: CharacterState,
     characters        : CharacterProps[],
     charactersHidden ?: CharacterProps[],
-    onClick          ?: (character: CharacterProps, state ?: CharacterState) => void,
-    opponent         ?: CharacterProps,
+    disabled         ?: boolean,
+    onClick          ?: (character: CharacterProps, state: CharacterState) => void,
+    opponent         ?: {
+        player: Player,
+        secret: CharacterProps,
+    }
 }) => {
     const rowPosition: Bounds[] = [{
         y       : 173,
@@ -73,15 +74,6 @@ export const Plateau = ({
     const rowSpacing = [32, 21, 11, 0];
 
     const [clicked] = useState(new Map<CharacterProps, boolean>());
-
-    const [disabled, setDisabled]           = useState(false);
-    const [overrideState, setOverrideState] = useState<CharacterState | undefined>(undefined);
-
-    const room = useRecoilValue(getRoomPath);
-
-    const opponentPlayer = useRecoilValue(getOpponent);
-    const winner         = useRecoilValue(getRoomWinnerForRoom(room));
-    const me             = useRecoilValue(getMe);
 
     const computeBounds = (bounds: Bounds, relative: Pick<Bounds, "width" | "height" | "padding">): ComputedBounds => {
         let tempBounds = { ...bounds };
@@ -132,7 +124,7 @@ export const Plateau = ({
 
         return {
             ...computeBounds(bounds, rowPosition[row]),
-            zIndex : !overrideState && isHidden
+            zIndex : !animation && isHidden
                 ? characters.length - (row * 10) + column
                 : 100 + (row * 10) + column,
         }
@@ -141,7 +133,7 @@ export const Plateau = ({
     const getDelay = (row: number, column: number, character: CharacterProps) => {
         const isRowOdd = (row % 2) === 1;
 
-        if (overrideState === "win") {
+        if (animation === "win") {
             return column + (isRowOdd ? 1.8 : 1);
         }
 
@@ -157,8 +149,8 @@ export const Plateau = ({
     }
 
     const getState = (character: CharacterProps): CharacterState => {
-        if (overrideState) {
-            return overrideState;
+        if (animation) {
+            return animation;
         }
 
         if (charactersHidden && charactersHidden.includes(character)) {
@@ -177,100 +169,6 @@ export const Plateau = ({
 
         return previous;
     }, []);
-
-    const wait = (time: number) => new Promise(resolve => setTimeout(_ => resolve(true), time));
-
-    useEffect(() => {
-        if (!winner || !me || winner.id !== me.id) {
-            return;
-        }
-
-        let isCancelled = false;
-        let confettiInterval: any;
-
-        (async() => {
-            const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
-
-            const confettiOptions: confetti.Options = {
-                particleCount : 100,
-                spread        : 360,
-                startVelocity : 30,
-                ticks         : 100,
-                zIndex        : 0,
-            }
-
-            setDisabled(true);
-            setOverrideState("extrahidden");
-
-            await wait(150);
-            if (isCancelled) { return }
-
-            setOverrideState("win");
-
-            confettiInterval = setInterval(() => {
-                confetti({
-                    ...confettiOptions,
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-                });
-
-                confetti({
-                    ...confettiOptions,
-                    origin: { x: randomInRange(0.4, 0.6), y: Math.random() - 0.2 }
-                });
-
-                confetti({
-                    ...confettiOptions,
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-                });
-            }, 400);
-
-            await wait(10_000);
-            if (isCancelled) { return }
-
-            clearInterval(confettiInterval);
-
-            setOverrideState("hidden");
-            setOverrideState(undefined);
-            setDisabled(false);
-        })();
-
-        return () => {
-            isCancelled = true;
-
-            clearInterval(confettiInterval);
-
-            setOverrideState("hidden");
-            setOverrideState(undefined);
-            setDisabled(false);
-        }
-    }, [winner, me]);
-
-    useEffect(() => {
-        if (!winner || !me || winner.id === me.id) {
-            return;
-        }
-
-        let isCancelled = false;
-
-        (async() => {
-            setOverrideState("extrahidden");
-            setDisabled(true);
-
-            await wait(10_150);
-            if (isCancelled) { return }
-
-            setOverrideState(undefined);
-            setDisabled(false);
-        })();
-
-        return () => {
-            isCancelled = true;
-
-            setOverrideState("hidden");
-            setOverrideState(undefined);
-            setDisabled(false);
-        }
-    }, [winner, me]);
 
     const { t } = useTranslation();
 
@@ -294,11 +192,11 @@ export const Plateau = ({
                 </div>
             )}
 
-            { opponent && opponentPlayer &&
+            { opponent &&
                 <div className="plateau--opponent" style={{ ...computeBounds(rowPosition[3], imageSize) }}>
                     <div className="plateau--opponent__row">
                         <Character
-                            character={ opponent }
+                            character={ opponent.secret }
                             disabled={ true }
                             position={ getPosition(3, 0) }
                             state={ "visible" }
@@ -306,7 +204,7 @@ export const Plateau = ({
                     </div>
 
                     <div className="plateau--opponent__info">
-                        <div className="plateau--opponent__name">{ opponentPlayer.name }</div>
+                        <div className="plateau--opponent__name">{ opponent.player.name }</div>
                         <div>{ t("scene.must-guess") }</div>
                         <div className="plateau--opponent__arrow">
                             <svg viewBox="0 0 500 500" width="500" height="500">
