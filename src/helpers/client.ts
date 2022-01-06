@@ -2,7 +2,7 @@ import { atomFamily } from "recoil";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { child, get as getInDb, getDatabase, onValue, ref, remove, update } from "firebase/database";
+import { get as getInDb, getDatabase, onValue, ref, remove, update } from "firebase/database";
 
 const config = require(`../../${ process.env.CONFIG_FILE }`);
 
@@ -33,7 +33,7 @@ export const getDataFromPath = atomFamily<any | undefined, string>({
 
             onSet((newValue) => {
                 if (newValue == undefined) {
-                    remove(child(parentDoc, "values"));
+                    remove(childDoc);
                 } else {
                     update(parentDoc, { values: newValue });
                 }

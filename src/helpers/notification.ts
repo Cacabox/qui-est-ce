@@ -19,8 +19,6 @@ export const addNotificationProxy = selector<Pick<NotificationModel, "text" | "a
             return;
         }
 
-        console.log("ADD NOTIFICATION", newValue);
-
         const notifications = get(getNotifications);
 
         const id = notifications.length > 0
