@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { getDatabase, onDisconnect, onValue, ref, update } from "firebase/database";
+import * as Sentry from "@sentry/browser";
 
 import { getRoomPath } from "@helpers/room";
 import { getCurrentUser, getCurrentUserPath } from "@helpers/user";
@@ -23,6 +24,11 @@ export const Client = () => {
             name     : user.displayName,
             online   : true,
             photoURL : user.photoURL,
+        });
+
+        Sentry.setUser({
+            id       : user.uid,
+            username : user.displayName || "undefined",
         });
 
         update(roomUsersDoc, { [user.uid]: true });

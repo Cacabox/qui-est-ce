@@ -18,9 +18,15 @@ jobs:
           node-version: '16'
 
       - name: Install and Build 🔧
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           yarn install
           yarn build
+
+      - name: Remove Sourcemap in Prod
+        run: |
+          yarn clean:sourcemap
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.8

@@ -2,12 +2,15 @@ import { Configuration as WebpackConfiguration, DefinePlugin } from "webpack";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import SentryCliPlugin from "@sentry/webpack-plugin";
 
 import path from "path";
 
 interface Configuration extends WebpackConfiguration {
     devServer?: WebpackDevServerConfiguration;
 }
+
+const packageJSON = require("./package.json");
 
 export default (_: any, argv: { mode: "development" | "production" }): Configuration => {
     return {
@@ -50,10 +53,21 @@ export default (_: any, argv: { mode: "development" | "production" }): Configura
             filename : "main.js",
             path     : path.resolve(__dirname, "dist")
         },
+        devtool: "source-map",
         plugins: [
             new MiniCssExtractPlugin(),
             new DefinePlugin({
                 "process.env.CONFIG_FILE": JSON.stringify(argv.mode === "production" ? "config.json" : "config.dev.json"),
+            }),
+            new SentryCliPlugin({
+                authToken  : process.env.SENTRY_AUTH_TOKEN,
+                org        : "cacabox",
+                project    : "qui-est-ce",
+                release    : packageJSON.version,
+                include    : ".",
+                ignoreFile : ".sentrycliignore",
+                ignore     : ["node_modules", "webpack.config.js", "webpack.config.ts"],
+                configFile : "sentry.properties",
             }),
         ],
         devServer: {

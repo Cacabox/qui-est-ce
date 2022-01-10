@@ -3,4 +3,4 @@ require("ts-node").register({
     transpileOnly: true,
 });
 
-module.exports = require("../tools/clean.ts");
+module.exports = require("../tools/clean-sourcemap.ts");

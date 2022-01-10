@@ -9,6 +9,9 @@
         "measurementId" : "G-42DS3REFD6",
         "projectId"     : "qui-est-ce-3621d"
     },
+    "sentry": {
+        "dsn": "https://c9f439dc17c44292ae0aa782d2a4680b@o1112118.ingest.sentry.io/6141546"
+    },
     "token": {
         "key": "twitch-token",
         "url": "https://europe-west1-qui-est-ce-3621d.cloudfunctions.net/generateToken"
