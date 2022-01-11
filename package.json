@@ -1,6 +1,6 @@
 {
   "name": "qui-est-ce",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "main": "dist/main.js",
   "repository": "git@github.com:Cacabox/qui-est-ce.git",
   "license": "MIT",
@@ -28,6 +28,7 @@
     "firebase": "^9.6.1",
     "framer-motion": "^5.5.5",
     "graphql": "^16.2.0",
+    "html-webpack-plugin": "^5.5.0",
     "i18next": "^21.6.4",
     "i18next-browser-languagedetector": "^6.1.2",
     "mini-css-extract-plugin": "^2.4.5",

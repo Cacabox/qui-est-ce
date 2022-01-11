@@ -1,6 +1,7 @@
 import { Configuration as WebpackConfiguration, DefinePlugin } from "webpack";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import SentryCliPlugin from "@sentry/webpack-plugin";
 
@@ -21,12 +22,6 @@ export default (_: any, argv: { mode: "development" | "production" }): Configura
                     test    : /\.tsx?$/,
                     use     : "ts-loader",
                     exclude : /node_modules/,
-                }, {
-                    test      : /\.html$/,
-                    type      : "asset/resource",
-                    generator : {
-                        filename: "[name][ext]",
-                    }
                 }, {
                     test      : /\.(avif|png|svg|ttf|webp|woff2)$/,
                     type      : "asset/resource",
@@ -50,11 +45,14 @@ export default (_: any, argv: { mode: "development" | "production" }): Configura
             plugins: [new TsconfigPathsPlugin({ configFile: "./tsconfig.json" })]
         },
         output: {
-            filename : "main.js",
+            filename : "main-[chunkhash].js",
             path     : path.resolve(__dirname, "dist")
         },
         devtool: "source-map",
         plugins: [
+            new HtmlWebpackPlugin({
+                template: "src/index.html",
+            }),
             new MiniCssExtractPlugin(),
             new DefinePlugin({
                 "process.env.CONFIG_FILE": JSON.stringify(argv.mode === "production" ? "config.json" : "config.dev.json"),
