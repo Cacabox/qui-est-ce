@@ -64,7 +64,7 @@ export const Scene = () => {
 
     const rightGuess = () => {
         if (!opponentGuess) {
-            throw new Error();
+            throw new Error("rightGuess - !opponentGuess");
         }
 
         setOpponentGuess({ ...opponentGuess, reason: "right" });
@@ -78,7 +78,7 @@ export const Scene = () => {
 
     const wrongGuess = () => {
         if (!opponentGuess) {
-            throw new Error();
+            throw new Error("wrongGuess - !opponentGuess");
         }
 
         setOpponentGuess({ ...opponentGuess, reason: "wrong" });

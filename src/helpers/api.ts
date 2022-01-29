@@ -31,7 +31,7 @@ export const twitchApi = selectorFamily<any, TwitchApiParam>({
         });
 
         if (request.status < 200 || request.status > 299) {
-            throw new Error();
+            throw new Error("Twitch API error");
         }
 
         return request.json();

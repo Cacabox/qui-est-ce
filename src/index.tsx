@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { RecoilRoot } from "recoil";
-import * as Sentry from "@sentry/browser";
+import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 
 import { App } from "@components/App";
@@ -15,7 +15,7 @@ const config = require(`../${ process.env.CONFIG_FILE }`);
 
 if (config.sentry) {
     Sentry.init({
-        dsn          : config.sentry.dns,
+        dsn          : config.sentry.dsn,
         integrations : [new Integrations.BrowserTracing()],
 
         // Set tracesSampleRate to 1.0 to capture 100%
@@ -27,8 +27,8 @@ if (config.sentry) {
 
 ReactDOM.render((
     <RecoilRoot>
-        <ErrorBoundary>
+        <Sentry.ErrorBoundary fallback={ ErrorBoundary } showDialog={ false }>
             <App />
-        </ErrorBoundary>
+        </Sentry.ErrorBoundary>
     </RecoilRoot>
 ), document.querySelector("#app"));

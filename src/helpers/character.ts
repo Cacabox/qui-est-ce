@@ -153,7 +153,7 @@ export const getCharacterGuessForPlayer = selectorFamily<CharacterGuess | undefi
         const character = characters.find(character => character.id === guess.id);
 
         if (!character) {
-            throw new Error();
+            throw new Error("No character found");
         }
 
         const result: CharacterGuess = { ...character, reason: guess.reason }

@@ -14,7 +14,7 @@ interface Configuration extends WebpackConfiguration {
 const packageJSON = require("./package.json");
 
 export default (_: any, argv: { mode: "development" | "production" }): Configuration => {
-    return {
+    const config: Configuration =  {
         entry: "./src/index.tsx",
         module: {
             rules: [
@@ -57,16 +57,6 @@ export default (_: any, argv: { mode: "development" | "production" }): Configura
             new DefinePlugin({
                 "process.env.CONFIG_FILE": JSON.stringify(argv.mode === "production" ? "config.json" : "config.dev.json"),
             }),
-            new SentryCliPlugin({
-                authToken  : process.env.SENTRY_AUTH_TOKEN,
-                org        : "cacabox",
-                project    : "qui-est-ce",
-                release    : packageJSON.version,
-                include    : ".",
-                ignoreFile : ".sentrycliignore",
-                ignore     : ["node_modules", "webpack.config.js", "webpack.config.ts"],
-                configFile : "sentry.properties",
-            }),
         ],
         devServer: {
             static: {
@@ -77,4 +67,19 @@ export default (_: any, argv: { mode: "development" | "production" }): Configura
             port         : 3000,
         }
     }
+
+    if (argv.mode === "production") {
+        config.plugins?.push(new SentryCliPlugin({
+            authToken  : process.env.SENTRY_AUTH_TOKEN,
+            org        : "cacabox",
+            project    : "qui-est-ce",
+            release    : packageJSON.version,
+            include    : ".",
+            ignoreFile : ".sentrycliignore",
+            ignore     : ["node_modules", "webpack.config.js", "webpack.config.ts"],
+            configFile : "sentry.properties",
+        }));
+    }
+
+    return config;
 };

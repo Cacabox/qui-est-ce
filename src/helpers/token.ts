@@ -49,7 +49,7 @@ export const getFirebaseToken = selector<string>({
         const request = await fetch(url.toString());
 
         if (request.status < 200 || request.status > 299) {
-            throw new Error();
+            throw new Error("Unable to getFirebaseToken");
         }
 
         return request.text();

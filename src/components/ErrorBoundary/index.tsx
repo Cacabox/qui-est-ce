@@ -1,63 +1,26 @@
-import React, { Component } from "react";
-import { Translation, useTranslation } from "react-i18next";
-import { useSetRecoilState } from "recoil";
+import React from "react";
+import { Translation } from "react-i18next";
 
-import { getTwitchToken } from "@helpers/token";
+const config = require(`../../../${ process.env.CONFIG_FILE }`);
 
 import "./style.css";
 
-interface ErrorBoundaryProps {}
-
-interface ErrorBoundaryState {
-    hasError: boolean,
-}
-
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-    constructor(props: ErrorBoundaryProps) {
-        super(props);
-
-        this.state = {
-            hasError: false
-        }
-    }
-
-    static getDerivedStateFromError(error: Error) {
-        return {
-            hasError: true
-        }
-    }
-
-    render() {
-        if (this.state.hasError) {
-            return (
-                <div className="error">
-                    <Translation>
-                    {
-                        t => <div>{ t("error-boundary.error") }</div>
-                    }
-                    </Translation>
-
-                    <Recovery />
-                </div>
-            )
-        }
-
-        return this.props.children;
-    }
-}
-
-const Recovery = () => {
-    const setTwitchToken = useSetRecoilState(getTwitchToken);
-
+export const ErrorBoundary = () => {
     const reset = () => {
-        setTwitchToken("");
+        window.localStorage.removeItem(config.token.key);
 
         window.location.reload();
     }
 
-    const { t } = useTranslation();
-
     return (
-        <button onClick={ reset }>{ t("error-boundary.reset") }</button>
+        <div className="error">
+            <Translation>{ t => (
+                <>
+                    <div>{ t("error-boundary.error") }</div>
+
+                    <button onClick={ reset }>{ t("error-boundary.reset") }</button>
+                </>
+            )}</Translation>
+        </div>
     )
 }
