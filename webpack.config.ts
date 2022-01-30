@@ -74,10 +74,11 @@ export default (_: any, argv: { mode: "development" | "production" }): Configura
             org        : "cacabox",
             project    : "qui-est-ce",
             release    : packageJSON.version,
-            include    : ".",
+            include    : "./dist/",
             ignoreFile : ".sentrycliignore",
             ignore     : ["node_modules", "webpack.config.js", "webpack.config.ts"],
             configFile : "sentry.properties",
+            urlPrefix  : "~/qui-est-ce/",
         }));
     }
 

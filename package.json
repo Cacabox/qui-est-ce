@@ -1,6 +1,6 @@
 {
   "name": "qui-est-ce",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "main": "dist/main.js",
   "repository": "git@github.com:Cacabox/qui-est-ce.git",
   "license": "MIT",
