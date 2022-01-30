@@ -21,6 +21,10 @@ export const getPlayersForRoom = atomFamily<Player[], string>({
         return getInDb(roomUsersDoc).then((doc) => {
             const data = doc.val();
 
+            if (!data) {
+                return [];
+            }
+
             return Promise.all(Object.keys(data).map(async(id) => {
                 const userRef = ref(db, `users/${ id }`);
 
