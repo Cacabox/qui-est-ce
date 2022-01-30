@@ -43,7 +43,7 @@ export const getPlayersForRoom = atomFamily<Player[], string>({
             let players = new Map<string, Player>();
 
             const unsubscribe = onValue(roomUsersDoc, (doc) => {
-                const data = new Map<string, boolean>(Object.entries(doc.val()));
+                const data = new Map<string, boolean>(Object.entries(doc.val() || []));
 
                 data.forEach(async(online, id) => {
                     const player = players.get(id);
