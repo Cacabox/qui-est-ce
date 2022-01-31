@@ -33,8 +33,8 @@ export const Client = () => {
 
         update(roomUsersDoc, { [user.uid]: true });
 
-        const unsubscribe = onValue(connected, (snapshot) => {
-            if (snapshot.val() == false) {
+        const unsubscribe = onValue(connected, (data) => {
+            if (data.val() == false) {
                 return;
             }
 

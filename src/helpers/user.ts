@@ -1,5 +1,5 @@
 import { selector } from "recoil";
-import { getAuth, signInWithCustomToken, User } from "firebase/auth";
+import { browserLocalPersistence, getAuth, setPersistence, signInWithCustomToken, User } from "firebase/auth";
 
 import { firebaseClient } from "@helpers/client";
 import { getFirebaseToken } from "@helpers/token";
@@ -8,6 +8,8 @@ export const getCurrentUser = selector<User>({
     key: "getCurrentUser",
     get: async ({ get }) => {
         const auth = getAuth(firebaseClient);
+
+        await setPersistence(auth, browserLocalPersistence);
 
         let currentUser = auth.currentUser;
 

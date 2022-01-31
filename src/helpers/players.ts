@@ -1,6 +1,7 @@
 import { atomFamily, selector } from "recoil";
-import { get as getInDb, getDatabase, onValue, ref } from "firebase/database";
+import { getDatabase, onValue, ref } from "firebase/database";
 
+import { getInDb } from "@helpers/client";
 import { getCurrentUser } from "@helpers/user";
 import { getRoomPath } from "@helpers/room";
 
@@ -18,9 +19,7 @@ export const getPlayersForRoom = atomFamily<Player[], string>({
 
         const roomUsersDoc = ref(db, `${ room }/users`);
 
-        return getInDb(roomUsersDoc).then((doc) => {
-            const data = doc.val();
-
+        return getInDb(roomUsersDoc).then((data) => {
             if (!data) {
                 return [];
             }
@@ -28,9 +27,7 @@ export const getPlayersForRoom = atomFamily<Player[], string>({
             return Promise.all(Object.keys(data).map(async(id) => {
                 const userRef = ref(db, `users/${ id }`);
 
-                const user = await getInDb(userRef);
-
-                return user.val();
+                return getInDb(userRef);
             }));
         });
     },
@@ -43,9 +40,15 @@ export const getPlayersForRoom = atomFamily<Player[], string>({
             let players = new Map<string, Player>();
 
             const unsubscribe = onValue(roomUsersDoc, (doc) => {
-                const data = new Map<string, boolean>(Object.entries(doc.val() || []));
+                const data = doc.val();
 
-                data.forEach(async(online, id) => {
+                if (!data) {
+                    return;
+                }
+
+                const map = new Map<string, boolean>(Object.entries(data));
+
+                map.forEach(async(online, id) => {
                     const player = players.get(id);
 
                     if (player) {
@@ -63,9 +66,9 @@ export const getPlayersForRoom = atomFamily<Player[], string>({
 
                     const userRef = ref(db, `users/${ id }`);
 
-                    const user = await getInDb(userRef);
+                    const user: Player = await getInDb(userRef);
 
-                    players.set(id, user.val() as Player);
+                    players.set(id, user);
 
                     setSelf([...players.values()]);
                 });

@@ -2,7 +2,7 @@ import { atomFamily } from "recoil";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { get as getInDb, getDatabase, onValue, ref, remove, update } from "firebase/database";
+import { getDatabase, onValue, Query, ref, remove, update } from "firebase/database";
 
 const config = require(`../../${ process.env.CONFIG_FILE }`);
 
@@ -15,14 +15,24 @@ export const firebaseClient = initializeApp(config.firebase);
 
 export const analyticsClient = getAnalytics(firebaseClient);
 
+export const getInDb = (query: Query): Promise<any> => {
+    return new Promise((resolve) => {
+        onValue(query, (snapshot) => {
+            resolve(snapshot.val());
+        }, { onlyOnce: true });
+    });
+}
+
 export const getDataFromPath = atomFamily<any | undefined, string>({
     key     : "getDataFromPath",
-    default : (path: string) => {
+    default : async(path: string) => {
         const db = getDatabase();
 
         const doc = ref(db, path);
 
-        return getInDb(doc).then(data => data.val() || undefined);
+        const data = await getInDb(doc);
+
+        return data || undefined;
     },
     effects_UNSTABLE: path => [
         ({ setSelf, onSet }) => {

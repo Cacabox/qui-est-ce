@@ -1,6 +1,7 @@
 import { atomFamily } from "recoil";
-import { get as getInDb, getDatabase, onValue, ref, remove, update } from "firebase/database";
+import { getDatabase, onValue, ref, remove, update } from "firebase/database";
 
+import { getInDb } from "@helpers/client";
 import { Player } from "@helpers/players";
 
 export type RoundState = "not-started" | "running" | "finished";
@@ -12,7 +13,7 @@ export const getRoundStateForRoom = atomFamily<RoundState, string>({
 
         const doc = ref(db, `${ room }/roundState`);
 
-        return getInDb(doc).then(data => data.val() || "not-started");
+        return getInDb(doc).then(data => data || "not-started");
     },
     effects_UNSTABLE: room => [
         ({ setSelf, onSet }) => {
@@ -41,7 +42,7 @@ export const isRoomSameBoardForRoom = atomFamily<boolean, string>({
 
         const doc = ref(db, `${ room }/sameBoard`);
 
-        return getInDb(doc).then(data => data.val() || false);
+        return getInDb(doc).then(data => data || false);
     },
     effects_UNSTABLE: room => [
         ({ setSelf, onSet }) => {
@@ -70,7 +71,7 @@ export const getRoomWinnerForRoom = atomFamily<Player | undefined, string>({
 
         const doc = ref(db, `${ room }/roomWinner`);
 
-        return getInDb(doc).then(data => data.val() || undefined);
+        return getInDb(doc).then(data => data || undefined);
     },
     effects_UNSTABLE: room => [
         ({ setSelf, onSet }) => {
