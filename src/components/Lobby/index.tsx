@@ -58,13 +58,13 @@ export const Lobby = () => {
         setWinner(undefined);
 
         const allowedCharacters = shuffle(characters.filter(character => {
-            for (let categorie of character.categories) {
-                if (categoriesBanned.includes(categorie)) {
-                    return false;
+            return character.categories.reduce<boolean>((previous, current) => {
+                if (previous) {
+                    return previous;
                 }
-            }
 
-            return true;
+                return !categoriesBanned.includes(current);
+            }, false);
         }));
 
         const maxLength = isSameBoard ? allowedCharacters.length : allowedCharacters.length / 2;
